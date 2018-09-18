@@ -1,0 +1,51 @@
+import Vue from 'vue/dist/vue.js'
+
+        var myList=Vue.component('repo-item', {
+          props: ['title', 'url', 'desc'],
+          template: ` <li> <textarea>\${ title }</textarea> <textarea>\${ url }</textarea> <textarea>\${ desc }</textarea> \
+                        <button v-on:click="$emit(\'edit\')"><icon name="beer"></icon></button> \
+                        <button v-on:click="$emit(\'remove\')">X</button> </li>`
+        });
+
+
+
+        new Vue({
+                el: '#repo-list-example',
+                  data: {
+                    newText: '',
+                    repos: [
+                      {
+                        id: 1,
+                        title: 'AgroPortal',
+                        url: 'http://agroportal.lirmm.fr/',
+                        desc: 'Use AgroPortal to access and share ontologies',
+                      },
+                      {
+                        id: 2,
+                        title: 'BioPortal',
+                        url:  'https://bioportal.bioontology.org/',
+                        desc: 'the world’s most comprehensive repository of biomedical ontologies ',
+                      },
+                      {
+                        id: 3,
+                        title: 'EBI-OLS',
+                        url: 'https://www.ebi.ac.uk/ols/index',
+                        desc: 'The Ontology Lookup Service (OLS) is a repository for biomedical ontologies that aims to provide a single point of access to the latest ontology versions.',
+                      }
+                    ],
+                    nextRepoId: 4
+                  },
+                  components: { myList : myList},
+                  methods: {
+                    addNewRepo: function () {
+                      this.repos.push({
+                        id: this.nextRepoId++,
+                        title: this.newRepoTitle,
+                        url: this.newRepoUrl,
+                        desc: this.newRepoDesc,
+                      })
+                      this.newTodoText = ''
+                    }
+                  }
+        })
+

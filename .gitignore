@@ -1,0 +1,5 @@
+config.py
+*.pyc
+*.log
+repoConf.wsgi
+node_modules

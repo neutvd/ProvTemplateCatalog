@@ -1,0 +1,207 @@
+
+.invisiblebutton {
+    /*background-color: Transparent;*/
+    background-color: red;
+    background-repeat:no-repeat;
+    border: 1px black;
+    cursor: pointer;
+    overflow: hidden;
+    outline: 1px black;
+}
+
+
+.invisiblebutton:disabled,
+.invisiblebutton[disabled]{
+  color: #202020;
+}
+
+#table-wrapper {
+  position:relative;
+  margin-right: 20px;
+}
+
+#table-scroll {
+  overflow:auto;
+  margin-top:20px;
+  margin-left: 40px
+}
+#table-wrapper table {
+  width:100%;
+
+}
+#table-wrapper table * {
+  background:white;
+  /*color:black;*/
+}
+#table-wrapper table thead th .text {
+  position:absolute;   
+  top:-20px;
+  z-index:2;
+  height:20px;
+  width:35%;
+  /* border:1px solid red; */
+}
+
+.explain {
+    margin: 30px 20px 70px 40px;
+}
+
+.footer {
+    margin: 80px 20px 70px 40px;
+    background-color: #1C418F;
+    color: #bbbbbb;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.logInfo{
+    margin-top: 40px !important;
+    color: #f5cdb6;
+}
+
+.headTitle{
+    font-size: 130%;
+    border: 2px #DDDDDD solid;
+    background-color: white;
+    border-radius: 10px;
+    padding-top: 15px !important;
+    text-align: center;
+    margin-left: 10px;
+    margin-top: 17px;
+    width: 300px !important;
+}
+
+.about{
+    visibility: hidden;
+    border: 2px #DDDDDD solid;
+    background-color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100px !important;
+    text-align: center;
+    margin-top: 17px;
+    padding-top: 20px !important;
+    padding-bottom: 22px !important;
+    margin-left: 10px;
+    margin-right: 15px;
+}
+
+.firstTD{
+    min-width: 300px;
+}
+
+.small{
+    width: 90px !important;
+    background-color: white;
+    border-radius: 10px;
+    margin-top: 18px;
+    margin-left: 45px;
+    padding-top: 13px !important;
+    padding-bottom: 15px !important;
+}
+
+.headDiv{
+    background-color: #1C418F;
+    border: 1px #DDDDDD solid;
+}
+
+.modal-mask {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .5);
+  display: table;
+  transition: opacity .3s ease;
+}
+
+.modal-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.modal-container {
+  width: 800px;
+  margin: 0px auto;
+  padding: 20px 30px;
+  background-color: #fff;
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+  transition: all .3s ease;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.modal-header h3 {
+  margin-top: 0;
+  color: #42b983;
+}
+
+.modal-body {
+}
+
+.modal-body input {
+    width: 300px;
+}
+
+.modal-default-button {
+  float: right;
+}
+
+.modal-default-button-not {
+  float: right;
+  opacity: 0.2;
+  cursor: default;
+}
+
+.addButton {
+    margin-top: 30px;
+    margin-left: 40px;
+    border-radius: 10px;
+    padding: 18px;
+}
+
+.showButton {
+    align: right;
+    margin-top: 30px;
+    margin-left: 40px;
+    border-radius: 10px;
+    padding: 18px;
+}
+
+#button_footer {
+    justify-content: flex-start;
+}
+
+/*
+ * The following styles are auto-applied to elements with
+ * transition="modal" when their visibility is toggled
+ * by Vue.js.
+ *
+ * You can easily play with the modal transition by editing
+ * these styles.
+ */
+
+.modal-enter {
+  opacity: 0;
+}
+
+.modal-leave-active {
+  opacity: 0;
+}
+
+.modal-enter .modal-container,
+.modal-leave-active .modal-container {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}
+
+/* line 72, ../bower_components/foundation/scss/foundation/components/_tables.scss */
+table tr th,
+table tr td {
+ /* padding: 0.5625rem 0.625rem; */
+  font-size: 0.875rem;
+  color: #222222;
+}
+

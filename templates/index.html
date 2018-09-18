@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <meta>
+    <meta charset="UTF-8">
+    <meta name="author" content="2017, Doron Goldfarb, doron.goldfarb@umweltbundesamt.at">
+    <title>PROV-Template Catalog</title>
+  </meta>
+
+<head>
+<!-- Add this to <head> -->
+<link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap@next/dist/css/bootstrap.min.css"/>
+<link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css"/>
+<link rel="stylesheet" type="text/css" href="/static/css/custom.css"> 
+<link rel="stylesheet" type="text/css" href="/static/css/app.css"> 
+      <script type="text/javascript" src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+      <script type="text/javascript" src="/static/js/authomatic.js"></script>
+</head>
+<body>
+	<script type="text/javascript">(( popup_js | safe ))</script>
+
+        <div id="template-list-example">
+	<div class="headDiv" align="right" v-cloak>
+		<ul class="small-block-grid-6">
+			<li class="small"><a href="https://www.eudat.eu/"> <img src="/static/img/ENVRI-plus_XL.jpg"/></a></li>
+			<li class="headTitle">PROV-Template Catalog</li>
+			<li class="about" v-on:click='triggerAbout()'>About</li>
+
+			<li v-if='!jwt'>
+				<a class="authomatic provider-button google" href="login/google">
+					<span>Login with Google</span><img src="/static/img/icons/google.ico"/>
+				</a>
+			</li>
+			<li v-if='!jwt'>
+				<a class="authomatic provider-button github" href="login/github">
+					<span>Login with GitHub</span><img src="/static/img/icons/github.ico"/>
+				</a>
+			</li>
+			<li v-if='!jwt'>
+				<a class="authomatic provider-button linkedin" href="login/linkedin">
+					<span>Login with LinkedIn</span><img src="/static/img/icons/linkedin.ico"/>
+				</a>
+			</li>
+
+			<li v-if='jwt' class="logInfo">
+				<a>Logged in:</a>
+			</li>
+			<li v-if='jwt' class="logInfo">
+				<a>{{ user }} / {{ provider }}</a>
+			</li>
+			<li v-if='jwt'>
+				<a class="authomatic provider-button github" v-on:click='triggerLogout();'>
+					<span>Logout</span><img src=""/>
+				</a>
+			</li>
+		</ul>
+	</div>
+	<div>
+		<div class="explain" v-if='!jwt'>Log in to register or manage PROV-Templates for RI DLC.</div>
+		<button class="addButton" v-if='jwt' v-on:click='triggerAdd()' v-cloak>Register new template</button>
+	</div>
+	<div id="table-wrapper" v-cloak>
+		<div id="table-scroll">
+		  <table>
+		  <thead style="border-bottom: 2px #DDDDDD solid">
+			<tr>
+				<!--
+				<th><span>Title</span></th>
+				<th><span>url</span></th>
+				<th><span>Description</span></th>
+				<th><span>type</span></th>
+				<th><span>Domain</span></th>
+				<th><span>comment</span></th>
+				<th><span>contact name</span></th>
+				<th><span>contact email</span></th>
+				-->
+				<th><span>Meta</span></th>
+				<th><span>GRAPH</span></th>
+				<th><span v-if='jwt'>Edit</span></th>
+				<th><span v-if='jwt'>Delete</span></th>
+			</tr>
+		   </thead>
+		    <tbody>
+		    <tr
+		      is="template-item"
+		      v-for="(template, index) in templates"
+		      v-bind:key="template.id"
+		      v-bind:title="template.title"
+		      v-bind:subject="template.subject"
+		      v-bind:description="template.description"
+		      v-bind:type="template.type"
+		      v-bind:coverage="template.coverage"
+		      v-bind:comment="template.comment"
+		      v-bind:creator="template.creator"
+		      v-bind:created="template.created"
+		      v-bind:modified="template.modified"
+		      v-bind:prov="template.prov"
+		      v-bind:provsvg="template.provsvg"
+		      v-bind:urlprovn="template.retr_url_provn"
+		      v-bind:urlprovxml="template.retr_url_xml"
+		      v-bind:urlprovjson="template.retr_url_json"
+		      v-bind:urlprovrdftrig="template.retr_url_trig"
+		      v-bind:urlprovrdfxml="template.retr_url_rdfxml"
+		      v-bind:owner="template.owner"
+		      v-bind:jwt="jwt"
+		      v-on:remove="triggerDelete(index)"
+		      v-on:edit="triggerEdit(index)"
+		    ></tr>
+		    </tbody>
+		  </table>
+		</div>
+	</div>
+	<div>
+		<div class="footer">
+			This work has been supported by ENVRIplus, funded by the European Union under the Horizon 2020 programme - H2020-INFRADEV-2014-2015 (Contract No. 654182).
+		</div>
+	</div>
+
+  		<modal :message="curRep" :first="firstForm" :add="showAdd" v-if="showModal"
+			@close="showModal = false, firstForm = true"
+			@addtemplate="addNewTemplate"
+			@changetemplate="changeExistingTemplate"
+			@renderprov="convertProv"
+			@first="firstForm = true"
+			@second="firstForm = false"
+		>
+  		</modal>
+
+  		<confirmmodal :message="curRep" v-if="showConfirmModal" 
+			@close="showConfirmModal = false"
+			@deletetemplate="triggerDeleteConfirmed"
+		>
+  		</confirmmodal>
+
+  		<aboutmodal v-if="showAboutModal"
+			@close="showAboutModal = false"
+		>
+  		</aboutmodal>
+
+        </div>
+	
+	<style>
+		[v-cloak] {
+			display: none;
+		}
+	</style>
+
+	 <script src="static/dist/build.js"></script>
+
+
+	<script type="text/javascript">
+	authomatic.setup({
+		"backend:" : "login/",
+		"onLoginComplete" :  	function(result) {
+						window.Vue.jwt=result.jwt;
+						window.Vue.user=result.user;
+						window.Vue.provider=result.provider;
+						var headerdata={};
+                        			if (window.Vue.jwt)
+                                 			headerdata = { Authorization : "Bearer " + window.Vue.jwt };
+						window.Vue.axiosInstance.post("getTemplateList",
+							{},
+							{ headers: headerdata }
+							)
+                        				.then( response => {
+                                				window.Vue.templates = response.data;
+                                				console.log(response);
+                        				})
+						.catch(function(error) {console.log(error)});
+					},
+		"onPopupOpen" 	:  	function(result) { console.log("popopen " + result); }
+	});
+         authomatic.popupInit();
+	 console.log("INITIALIZED");
+      	</script>
+
+
+  </body>
+</html>
+
+
+
+

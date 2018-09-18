@@ -1,0 +1,68 @@
+Proof of concept: MongoDB Backend with a Flask API and a vue.js frontend, using flask-jwt-simple for API authorization and Authomatic for user authentication via oauth2 services from existing social media sites.
+
+The basic setup of vue.js follows
+
+	https://skyronic.com/blog/vue-project-scratch
+
+Authomatic integration based on
+
+	https://authomatic.github.io/authomatic/ Live Demo
+
+Requires MongoDb engine
+
+Required python components:
+
+	sudo pip install flask
+	sudo pip install flask-jwt-simple
+	sudo pip install authomatic
+	sudo pip install pymongo
+	sudo pip install python-openid
+	sudo pip install pyOpenSSL
+
+
+Javascript environment:
+	
+	sudo npm install -g webpack
+	sudo npm install axios
+
+	in "template" directory:
+		npm install
+		npm install --save vue
+
+		
+----- 
+
+Setup:
+
+	x)
+	Install necessary packages
+
+	x)
+	Set up MongoDB db with name RepoData
+	create colletion "Repositories"
+
+	x)
+	Change server url in 
+
+		templates/index.html
+		templates/src/main.js
+	
+	x)
+	Provide social media oauth2 app key and secret for each used site in config.py
+
+	x)
+	Set secret keys in app.py
+
+	x)
+	Use webpack to compile build.js from templates/src/main.js
+	put or symlink build.js in static/js/build.js
+
+	x)
+	Setup virtualhost in etc/apache2/sites-enabled
+
+	x)
+	Create wsgi file
+	
+	x)
+	Mandatory global (eg in apache2.conf) WSGI Setting for JWT to work:
+		WSGIPAssAuthorization On

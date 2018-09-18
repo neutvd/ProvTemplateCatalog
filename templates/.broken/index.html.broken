@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Vue Example</title>
+  </head>
+  <body>
+<div id="repo-list-example">
+          <input
+            v-model="newRepoTitle"
+            placeholder="Add a repo"
+          >
+          <input
+            v-model="newRepoUrl"
+            placeholder="Add a repo"
+          >
+          <input
+            v-model="newRepoDesc"
+            placeholder="Add a repo"
+          >
+          <button v-on:click="addNewRepo">Add</button>
+          <ul>
+            <li
+              is="listitem"
+              v-for="(repo, index) in repos"
+              v-bind:key="repo.id"
+              v-bind:title="repo.title"
+              v-bind:url="repo.url"
+              v-bind:desc="repo.desc"
+              v-on:remove="repos.splice(index, 1)"
+              v-on:edit=""
+            ></li>
+          </ul>
+        </div>
+
+    <script src="static/dist/build.js"></script>
+  </body>
+</html>
