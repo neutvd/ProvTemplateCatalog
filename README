@@ -1,4 +1,7 @@
-THIS IS WORK IN PROGRESS
+THIS IS WORK IN PROGRESS 
+Visit a running instance of this code at https://envriplus-provenance.test.fedcloud.eu/
+Do not use Internet Explorer
+This service uses a self issued certificate
 
 Proof of concept: MongoDB Backend with a Flask API and a vue.js frontend, using flask-jwt-simple for API authorization and Authomatic for user authentication via oauth2 services from existing social media sites.
 
