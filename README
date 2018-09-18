@@ -38,8 +38,8 @@ Setup:
 	Install necessary packages
 
 	x)
-	Set up MongoDB db with name RepoData
-	create colletion "Repositories"
+	Set up MongoDB db with name TemplateData
+	create colletion "Templates"
 
 	x)
 	Change server url in 
