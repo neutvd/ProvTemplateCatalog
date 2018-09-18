@@ -1,3 +1,5 @@
+THIS IS WORK IN PROGRESS
+
 Proof of concept: MongoDB Backend with a Flask API and a vue.js frontend, using flask-jwt-simple for API authorization and Authomatic for user authentication via oauth2 services from existing social media sites.
 
 The basic setup of vue.js follows
