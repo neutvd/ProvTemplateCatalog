@@ -17,11 +17,17 @@ import sys
 import prov
 import prov.dot
 
+
+
 import StringIO
 import io
 
 from config import CONFIG
 
+
+#bad test
+sys.path.insert(0, '/home/cloudadm/EnvriProvTemplates/provtemplates')
+import provconv
 
 class CustomFlask(Flask):
   jinja_options = Flask.jinja_options.copy()
@@ -350,10 +356,10 @@ def getTemplates():
 	print "getTemplates"
 	#return list
 	templates = db.Templates.find()
-	templateList = []
+	templateDict = {}
 	for template in templates:
-		templateList.append(str(template['_id']))
-	return json.dumps(templateList)
+		templateDict[str(template['_id'])]=getTemplateByID(str(template['_id']))
+	return json.dumps(templateDict)
 
 @application.route('/templates/<id>', methods=['GET'])
 def getTemplatesId(id="",):
@@ -428,6 +434,56 @@ def getTemplatesIdFormat(id="", format=""):
 	
 	except  Exception, e:
 		return str(e)
+
+@application.route('/templates/<id>/expand', methods=['GET'])
+def getTemplatesIdExpand(id=""):
+	log.error("getTemplateIDExpand")
+	ret=""
+	try:
+		bindings=request.args.get('bindings')
+		if not bindings:
+			raise Exception("Missing Bindings File")
+		outfmt="provn"
+		fmt=request.args.get('fmt')
+		if fmt in ["provn", "json",  "trig", "ttl", "xml", "rdf" ]:
+			outfmt=fmt
+		log.error(bindings)
+		log.error(outfmt)
+
+
+		#create stream from bindings
+		bindstream=io.StringIO()
+		bindstream.write(bindings)
+		bindstream.seek(0)
+		bindings_doc=provRead(bindstream)
+		bindings_dict=provconv.read_binding(bindings_doc)
+
+		templatestream=io.StringIO()
+		templatedata=json.loads(getTemplateByID(id))
+		templatestream.write(templatedata['prov'])
+		templatestream.seek(0)
+		template_doc=provRead(templatestream)
+
+		template=provconv.set_namespaces(bindings_doc.namespaces, template_doc)
+		log.error(bindings_doc)
+		log.error(template)
+		
+		exp=provconv.instantiate_template(template, bindings_dict)
+        	if outfmt in ["xml", "provn", "json"]:
+                	return(exp.serialize(format=outfmt))
+        	else:
+                	if outfmt == "rdf":
+                        	outfmt="xml"
+                		return(exp.serialize(format="rdf", rdf_format=outfmt))
+		
+
+	except Exception,e:
+		log.error("ERROR : " + str(e))
+		return str(e)
+	return (ret)
+	
+		
+
 
 @application.route('/renderProvFile', methods=['POST'])
 @jwt_required
