@@ -324,7 +324,7 @@ def addTemplate():
 		#we need to add retrieval URLs
 		retr_url_dict=dict()
 		baseurl=request.base_url
-		baseurl=baseurl.replace("addTemplate", "")
+		baseurl=baseurl.replace("/addTemplate", "")
 		log.error(baseurl)
 		retr_url_dict['retr_url_provn']=baseurl+"/templates/"+str(inserted.inserted_id)+"/provn"
 		retr_url_dict['retr_url_trig']=baseurl+"/templates/"+str(inserted.inserted_id)+"/trig"
