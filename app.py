@@ -323,11 +323,14 @@ def addTemplate():
 
 		#we need to add retrieval URLs
 		retr_url_dict=dict()
-		retr_url_dict['retr_url_provn']=request.base_url+"/templates/"+str(inserted.inserted_id)+"/provn"
-		retr_url_dict['retr_url_trig']=request.base_url+"/templates/"+str(inserted.inserted_id)+"/trig"
-		retr_url_dict['retr_url_rdfxml']=request.base_url+"/templates/"+str(inserted.inserted_id)+"/rdfxml"
-		retr_url_dict['retr_url_xml']=request.base_url+"/templates/"+str(inserted.inserted_id)+"/provxml"
-		retr_url_dict['retr_url_json']=request.base_url+"/templates/"+str(inserted.inserted_id)+"/provjson"
+		baseurl=request.base_url
+		baseurl=baseurl.replace("addTemplate", "")
+		log.error(baseurl)
+		retr_url_dict['retr_url_provn']=baseurl+"/templates/"+str(inserted.inserted_id)+"/provn"
+		retr_url_dict['retr_url_trig']=baseurl+"/templates/"+str(inserted.inserted_id)+"/trig"
+		retr_url_dict['retr_url_rdfxml']=baseurl+"/templates/"+str(inserted.inserted_id)+"/rdfxml"
+		retr_url_dict['retr_url_xml']=baseurl+"/templates/"+str(inserted.inserted_id)+"/provxml"
+		retr_url_dict['retr_url_json']=baseurl+"/templates/"+str(inserted.inserted_id)+"/provjson"
 	
 		added_links=db.Templates.update_one(
 			{ '_id' : inserted.inserted_id},
