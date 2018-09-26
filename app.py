@@ -1,6 +1,6 @@
 # Author: 2017 Doron Goldfarb, doron.goldfarb@umweltbundesamt.at
 
-from flask import Flask,render_template, jsonify, request, make_response, redirect, url_for
+from flask import Flask,render_template, jsonify, request, make_response, redirect, url_for, Response
 from flask_jwt_simple import (
 	JWTManager, jwt_required, jwt_optional, create_jwt, get_jwt_identity, get_jwt, decode_jwt
 )
@@ -438,21 +438,33 @@ def getTemplatesIdFormat(id="", format=""):
 			#b._namespaces=prov.model.NamespaceManager()	
 	
 		res=None
+		mime=None
+		filename=None
 		#res=io.StringIO()
 		if format=="provxml":
 			res=provrep.serialize(None, "xml")
+			mime="text/xml"
+			filename=id+".template.xml"
 		elif format=="provjson":
 			res=provrep.serialize(None, "json")
+			mime="application/json"
+			filename=id+".template.json"
 		elif format=="trig":
 			res=provrep.serialize(None, "rdf", rdf_format="trig")
+			mime="application/trig"
+			filename=id+".template.trig"
 		elif format=="rdfxml":
 			res=provrep.serialize(None, "rdf", rdf_format="xml")
+			mime="application/rdf+xml"
+			filename=id+".template.rdf"
 		elif format=="provn":
 			res=provrep.serialize(None, "provn")
+			mime="text/provenance-notation"
+			filename=id+".template.provn"
 		else:
 			return("Format " + format + " not implemented")
 		#log.error(res)	
-		return(res)	
+		return Response(res, mimetype=mime, headers={ "Content-Disposition":"attachment;filename="+filename})	
 	
 	except  Exception, e:
 		return str(e) +  traceback.format_exc()
