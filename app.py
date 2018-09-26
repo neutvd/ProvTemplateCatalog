@@ -474,33 +474,46 @@ def getTemplatesIdExpand(id=""):
 	log.error("getTemplateIDExpand")
 	ret=""
 	try:
+		bindver="v2"
+		bindvernew=request.args.get('bindver')
+		log.error(bindvernew)
+		if bindvernew=="v3":
+			bindver="v3"
 		bindings=request.args.get('bindings')
 		if not bindings:
 			return "Missing bindings file.", status.HTTP_400_BAD_REQUEST
 		outfmt="provn"
 		fmt=request.args.get('fmt')
-		if fmt in ["provn", "provjson",  "trig",  "provxml", "rdfxml" ]:
-			outfmt=fmt
-			if outfmt in ["provjson", "provxml"]:
-				outfmt=outfmt.replace("prov", "")
-			if outfmt in ["rdfxml"]:
-				outfmt=outfmt.replace("xml", "")
-
-		else:
-			if fmt:
+		if fmt:
+			if fmt not in ["provn", "provjson",  "trig",  "provxml", "rdfxml" ]:
 				return "Output format " + fmt + " not supported.", status.HTTP_400_BAD_REQUEST
+			else:
+				outfmt=fmt
+		#	outfmt=fmt
+		#	if outfmt in ["provjson", "provxml"]:
+		#		outfmt=outfmt.replace("prov", "")
+		#	if outfmt in ["rdfxml"]:
+		#		outfmt=outfmt.replace("xml", "")
+		#
+		#		else:
 
 				
 		log.error(bindings)
 		log.error(outfmt)
 
 
-		#create stream from bindings
-		bindstream=io.StringIO()
-		bindstream.write(bindings)
-		bindstream.seek(0)
-		bindings_doc=provRead(bindstream)
-		bindings_dict=provconv.read_binding(bindings_doc)
+		bindings_dict=None
+
+		if bindver=="v2":
+			#create stream from bindings
+			bindstream=io.StringIO()
+			bindstream.write(bindings)
+			bindstream.seek(0)
+			bindings_doc=provRead(bindstream)
+			bindings_dict=provconv.read_binding(bindings_doc)
+		else:
+			bindings_doc=json.reads(bindings)
+			bindings_dict=provconv.read_binding_v3(bindings_doc)	
 
 		templatestream=io.StringIO()
 		templatedata=json.loads(getTemplateByID(id))
@@ -513,18 +526,44 @@ def getTemplatesIdExpand(id=""):
 		log.error(template)
 		
 		exp=provconv.instantiate_template(template, bindings_dict)
-        	if outfmt in ["xml", "provn", "json"]:
-                	return(exp.serialize(format=outfmt))
-        	else:
-                	if outfmt == "rdf":
-                        	outfmt="xml"
-                		return(exp.serialize(format="rdf", rdf_format=outfmt))
-		
+        	#if outfmt in ["xml", "provn", "json"]:
+               	# 	return(exp.serialize(format=outfmt))
+        	#	else:
+        	#       	if outfmt == "rdf":
+          	#              	outfmt="xml"
+           	#     		return(exp.serialize(format="rdf", rdf_format=outfmt))
+		res=None
+		mime=None
+		filename=None
+		#res=io.StringIO()
+		if outfmt=="provxml":
+			res=exp.serialize(None, "xml")
+			mime="text/xml"
+			filename=id+".expanded.xml"
+		elif outfmt=="provjson":
+			res=exp.serialize(None, "json")
+			mime="application/json"
+			filename=id+".expanded.json"
+		elif outfmt=="trig":
+			res=exp.serialize(None, "rdf", rdf_format="trig")
+			mime="application/trig"
+			filename=id+".expanded.trig"
+		elif outfmt=="rdfxml":
+			res=exp.serialize(None, "rdf", rdf_format="xml")
+			mime="application/rdf+xml"
+			filename=id+".expanded.rdf"
+		elif outfmt=="provn":
+			res=exp.serialize(None, "provn")
+			mime="text/provenance-notation"
+			filename=id+".expanded.provn"
+		else:
+			return("Format " + format + " not implemented")
+		#log.error(res)	
+		return Response(res, mimetype=mime, headers={ "Content-Disposition":"attachment;filename="+filename})	
 
 	except Exception,e:
 		log.error("ERROR : " + str(e))
 		return (str(e) + traceback.format_exc())
-	return (ret)
 	
 		
 
