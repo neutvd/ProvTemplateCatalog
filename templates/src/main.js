@@ -218,7 +218,6 @@ Vue.component('icon', Icon)
 					<tr><td><a :href="urlprovxml">prov-xml</a></td></tr> \
 					<tr><td><a :href="urlprovjson">prov-json</a></td></tr> \
 					<tr><td><a :href="urlprovrdftrig">prov-o (TriG)</a></td></tr> \
-					<tr><td><a :href="urlprovrdfxml">prov-o (rdf-xml)</a></td></tr> \
 					<tr><td><b>Created:</b> {{ created }}</td></tr> \
 					<tr><td><b>Modified:</b> {{ modified }}</td></tr> \
 			    </table> \

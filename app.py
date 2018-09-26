@@ -436,11 +436,6 @@ def getTemplatesIdFormat(id="", format=""):
 			log.error(repr(b.namespaces))
 			b._namespaces=provrep._namespaces	
 			#b._namespaces=prov.model.NamespaceManager()	
-
-
-		outDoc=prov.model.ProvDocument()
-		outDoc._namespaces=provrep.namespaces
-		outDoc
 	
 		res=None
 		#res=io.StringIO()
