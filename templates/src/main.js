@@ -107,7 +107,7 @@ var modal = Vue.component('modal',{
 				</tr>
 				<tr>
 				    <td>Description *</td>
-				    <td><input v-model="message.description"></input></td>
+				    <td><textarea style="resize: none; vertical-align: middle;" cols="20" rows="5" v-model="message.description"></textarea></td>
 				</tr>
 				<tr>
 				    <td>Type *</td>

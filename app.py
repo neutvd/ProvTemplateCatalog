@@ -4,6 +4,9 @@ from flask import Flask,render_template, jsonify, request, make_response, redire
 from flask_jwt_simple import (
 	JWTManager, jwt_required, jwt_optional, create_jwt, get_jwt_identity, get_jwt, decode_jwt
 )
+
+from flask_api import status
+
 from authomatic.adapters import WerkzeugAdapter
 from authomatic import Authomatic
 
@@ -17,7 +20,7 @@ import sys
 import prov
 import prov.dot
 
-
+import traceback
 
 import StringIO
 import io
@@ -358,7 +361,12 @@ def getTemplates():
 	templates = db.Templates.find()
 	templateDict = {}
 	for template in templates:
-		templateDict[str(template['_id'])]=getTemplateByID(str(template['_id']))
+		tData=json.loads(getTemplateByID(str(template['_id'])))
+		templateDict[str(template['_id'])]={ 	"title" 	: tData["title"], 
+							"description" 	: tData["description"],
+							"creator" 	: tData["creator"],
+							"created" 	: tData["created"],
+							"modified" 	: tData["modified"]}
 	return json.dumps(templateDict)
 
 @application.route('/templates/<id>', methods=['GET'])
@@ -412,8 +420,27 @@ def getTemplatesIdFormat(id="", format=""):
 		#log.error(tb.read())
 		provrep=provRead(tb)	
 
-		for rec in provrep.records:
+		
+
+		log.error(repr(provrep.namespaces))
+
+		log.error(repr(provrep.flattened().records))
+
+		log.error(repr(provrep))
+
+		for rec in provrep.flattened().records:
 			log.error(repr(rec))
+
+		#fix namespace issuces
+		for b in provrep.bundles:
+			log.error(repr(b.namespaces))
+			b._namespaces=provrep._namespaces	
+			#b._namespaces=prov.model.NamespaceManager()	
+
+
+		outDoc=prov.model.ProvDocument()
+		outDoc._namespaces=provrep.namespaces
+		outDoc
 	
 		res=None
 		#res=io.StringIO()
@@ -433,7 +460,7 @@ def getTemplatesIdFormat(id="", format=""):
 		return(res)	
 	
 	except  Exception, e:
-		return str(e)
+		return str(e) +  traceback.format_exc()
 
 @application.route('/templates/<id>/expand', methods=['GET'])
 def getTemplatesIdExpand(id=""):
@@ -442,11 +469,21 @@ def getTemplatesIdExpand(id=""):
 	try:
 		bindings=request.args.get('bindings')
 		if not bindings:
-			raise Exception("Missing Bindings File")
+			return "Missing bindings file.", status.HTTP_400_BAD_REQUEST
 		outfmt="provn"
 		fmt=request.args.get('fmt')
-		if fmt in ["provn", "json",  "trig", "ttl", "xml", "rdf" ]:
+		if fmt in ["provn", "provjson",  "trig",  "provxml", "rdfxml" ]:
 			outfmt=fmt
+			if outfmt in ["provjson", "provxml"]:
+				outfmt=outfmt.replace("prov", "")
+			if outfmt in ["rdfxml"]:
+				outfmt=outfmt.replace("xml", "")
+
+		else:
+			if fmt:
+				return "Output format " + fmt + " not supported.", status.HTTP_400_BAD_REQUEST
+
+				
 		log.error(bindings)
 		log.error(outfmt)
 
@@ -479,7 +516,7 @@ def getTemplatesIdExpand(id=""):
 
 	except Exception,e:
 		log.error("ERROR : " + str(e))
-		return str(e)
+		return (str(e) + traceback.format_exc())
 	return (ret)
 	
 		
@@ -524,23 +561,22 @@ def login(provider_name):
 	log.info(repr(adapt))
 	log.info(repr(response))
 	result = authomatic.login(adapt, provider_name, short_name=1)
-	print "LOGIN " + provider_name
 	if result:
 		if result.user:
 			result.user.update()
 
-		print "RESULT " + repr(result)
 
 		authres=json.loads(result.to_json())
 		identity="{ \"userid\":\""+str(authres['provider']['user'])+"\", \"siteid\":\"" + str(authres['provider']['id']) + "\"}"
 
 		log.info("Created Identity: " + identity)
 		ret = create_jwt(identity=identity)#
-		print ret
 		log.error(ret + "\n")
 		log.error(decode_jwt(ret))
 
-		jsonstring="{ \"jwt\" : \"" + ret + "\", \"user\" : \"" + result.user.name + "\", \"provider\" :  \"" + provider_name + "\"}"
+		user=result.user.name
+
+		jsonstring="{ \"jwt\" : \"" + ret + "\", \"user\" : \"" + user + "\", \"provider\" :  \"" + provider_name + "\"}"
 		log.info(jsonstring)
 		ppp_js="""(function(){
 					closer = function() {

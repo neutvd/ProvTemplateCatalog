@@ -19,6 +19,7 @@ Required python components:
 
 	sudo pip install flask
 	sudo pip install flask-jwt-simple
+	sudo pip install flask-API
 	sudo pip install authomatic
 	sudo pip install pymongo
 	sudo pip install python-openid
