@@ -25,6 +25,8 @@ import traceback
 import StringIO
 import io
 
+import cgi
+
 from config import CONFIG
 
 
@@ -386,7 +388,12 @@ def provRead(source, format=None):
 	serializers = Registry.serializers.keys()
 
 	if format:
-		return ProvDocument.deserialize(source=source, format=format.lower())
+		try:
+			ret=ProvDocument.deserialize(source=source, format=format.lower())
+			return ret
+		except Exception, e:
+			log.error(e)
+			raise TypeError(e)
 
 	for format in serializers:
 		source.seek(0)
@@ -575,14 +582,40 @@ def renderProvFile():
 	dor="error"
 	try:
 		fileData=request.json['provfile']
+		fmt=request.json['format']
 		tb=io.StringIO()
 		tb.write(fileData)
 		tb.seek(0)
-		tst=provRead(tb)	
+		outfmt=None
+		if fmt in ["prov-xml", "prov-json", "prov-o trig"]:
+			if fmt=="prov-xml":
+				outfmt="xml"
+			if fmt=="prov-json":
+				outfmt="json"
+			if fmt=="prov-o trig":
+				outfmt="rdf"
+		tst=provRead(tb, outfmt)	
 		dor=prov.dot.prov_to_dot(tst)
 	except Exception,e:
 		log.error("ERROR : " + str(e))
-		return str(e)
+		outmsg='<html> \
+				<body> \
+					<parsererror style="display: block; \
+								white-space: pre; \
+								border: 2px solid #c77; \
+								padding: 0 1em 0 1em; \
+								margin: 1em; \
+								background-color: #fdd; \
+								color: black"> \
+						<h3>This template contains the following errors:</h3> \
+						<div style="font-family:monospace;font-size:12px">' + cgi.escape(str(e)) + '</div> \
+					</parsererror> \
+				</body> \
+			</html>'
+		log.error("ERROR : " + outmsg)
+		return outmsg
+		#return str(e)
+
 	return dor.create_svg()
 	#return dor.create_ps()
 

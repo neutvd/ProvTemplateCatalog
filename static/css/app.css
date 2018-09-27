@@ -3598,7 +3598,7 @@ textarea {
   color: rgba(0, 0, 0, 0.75);
   display: block;
   font-size: 0.875rem;
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 0 0;
   padding: 0.75rem;
   height: 3.0625rem;
   width: 100%;
@@ -3712,15 +3712,16 @@ select {
   background-repeat: no-repeat;
   background-position: 97% center;
   border: 1px solid #cccccc;
-  padding: 0.75rem;
-  font-size: 0.875rem;
+  /*padding: 0.75rem;*/
+  /*font-size: 0.875rem;*/
   border-radius: 0;
-  height: 3.0625rem;
+  /*height: 3.0625rem;*/
+  height: 100%;
 }
 /* line 316, ../bower_components/foundation/scss/foundation/components/_forms.scss */
-select.radius {
+/*select.radius {
   border-radius: 10px;
-}
+}*/
 /* line 317, ../bower_components/foundation/scss/foundation/components/_forms.scss */
 select:hover {
   background-color: #f3f3f3;
@@ -3733,7 +3734,8 @@ input[type="file"],
 input[type="checkbox"],
 input[type="radio"],
 select {
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 0 0;
+  /*margin: 0 0 1.5rem 0;*/
 }
 
 /* line 420, ../bower_components/foundation/scss/foundation/components/_forms.scss */

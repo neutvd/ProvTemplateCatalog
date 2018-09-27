@@ -133,6 +133,14 @@
 		>
   		</confirmmodal>
 
+  		<missinginfomodal :message="curRep" v-if="showMissingInfoModal" 
+			@close="showMissingInfoModal = false">
+  		</missinginfomodal>
+
+  		<badtemplatemodal :message="curRep" v-if="showBadTemplateModal" 
+			@close="showBadTemplateModal = false">
+  		</badtemplatemodal>
+
   		<aboutmodal v-if="showAboutModal"
 			@close="showAboutModal = false"
 		>

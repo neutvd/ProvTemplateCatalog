@@ -8,6 +8,70 @@ import FileReader  from './FileReader.vue';
 
 var Filereader = Vue.component('text-reader', FileReader);
 
+var badtemplatemodal = Vue.component('badtemplatemodal',{
+	props: ['message'],
+	template: `\
+		<transition name="modal">\
+    <div class="modal-mask">\
+      <div class="modal-wrapper">\
+        <div class="modal-container">\
+\
+          <div class="modal-header">\
+            <slot name="header">\
+              Template seems to contain errors\
+            </slot>\
+          </div>\
+\
+          <div class="modal-body">\
+            <slot name="body">\
+          	<a>Template seems to contain errors</a> \
+            </slot>\
+          </div>\
+\
+          <div class="modal-footer">\
+            <slot name="footer">\
+              <button class="modal-default-button" @click="$emit('close')">Ok</button>\
+            </slot>\
+          </div>\
+        </div>\
+      </div>\
+    </div>\
+  </transition>\
+`
+});
+
+var missinginfomodal = Vue.component('missinginfomodal',{
+	props: ['message'],
+	template: `\
+		<transition name="modal">\
+    <div class="modal-mask">\
+      <div class="modal-wrapper">\
+        <div class="modal-container">\
+\
+          <div class="modal-header">\
+            <slot name="header">\
+              Mandatory information missing\
+            </slot>\
+          </div>\
+\
+          <div class="modal-body">\
+            <slot name="body">\
+          	<a>Missing mandatory field {{message.title}}</a> \
+            </slot>\
+          </div>\
+\
+          <div class="modal-footer">\
+            <slot name="footer">\
+              <button class="modal-default-button" @click="$emit('close')">Ok</button>\
+            </slot>\
+          </div>\
+        </div>\
+      </div>\
+    </div>\
+  </transition>\
+`
+});
+
 var confirmmodal = Vue.component('confirmmodal',{
 	props: ['message'],
 	template: `\
@@ -111,7 +175,15 @@ var modal = Vue.component('modal',{
 				</tr>
 				<tr>
 				    <td>Type *</td>
-				    <td><input v-model="message.type"></input></td>
+				    <td><select v-model="message.type" size="1">
+						<option value="prov-xml">prov-xml</option>
+						<option value="prov-json">prov-json</option>
+						<option value="prov-o trig">prov-o trig</option>
+					</select></td>
+				</tr>
+				<tr>
+				    <td>Creator *</td>
+				    <td><input v-model="message.creator"></input></td>
 				</tr>
 				<tr>
 				    <td>Coverage</td>
@@ -120,10 +192,6 @@ var modal = Vue.component('modal',{
 				<tr>
 				    <td>Comment</td>
 				    <td><input v-model="message.comment"></input></td>
-				</tr>
-				<tr>
-				    <td>Creator</td>
-				    <td><input v-model="message.creator"></input></td>
 				</tr>
           		</table>
 			</td>\
@@ -136,7 +204,7 @@ var modal = Vue.component('modal',{
 			<td><table>
 				<tr>
 					<td><text-reader @load="message.prov=$event; text2=$event;"></text-reader></td>
-					<td><div style="padding-right: 20px"><button class="modal-default-button" @click="$emit('renderprov', message.prov)">renderProv</button></div></td>
+					<td><div style="padding-right: 20px"><button class="modal-default-button" @click="$emit('renderprov', message.prov, message.type)">renderProv</button></div></td>
 				</tr>
 			</table></td>
 		</tr>	
@@ -249,6 +317,8 @@ Vue.component('icon', Icon)
 			curRep: null,
 			showModal: false,
 			showConfirmModal: false,
+			showMissingInfoModal: false,
+			showBadTemplateModal: false,
 			showAboutModal: false,
 			showAuth: false,
 			showAdd: true,
@@ -274,7 +344,7 @@ Vue.component('icon', Icon)
 			.catch(function(error) {console.log(error)});
 			console.log(this.templates)
 		  },
-                  components: { FileReader : FileReader, myList : myList, modal : modal, confirmmodal : confirmmodal, aboutmodal : aboutmodal},
+                  components: { FileReader : FileReader, myList : myList, modal : modal, badtemplatemodal : badtemplatemodal ,missinginfomodal : missinginfomodal, confirmmodal : confirmmodal, aboutmodal : aboutmodal},
                   methods: {
 		    createJwtHeaderData: function() {
 			var headerdata={};
@@ -302,9 +372,9 @@ Vue.component('icon', Icon)
 			.catch(function(error) {console.log(error)});
 			*/
 		    },
-		    convertProv: function (data) {
+		    convertProv: function (data, format) {
 			this.axiosInstance.post("https://envriplus-provenance.test.fedcloud.eu/renderProvFile", 
-						{'provfile':data},
+						{'provfile':data, 'format':format},
 						{ headers: this.createJwtHeaderData()})
 			.then( response => {
 				console.log(response);
@@ -374,27 +444,52 @@ Vue.component('icon', Icon)
 			this.showConfirmModal = false;
 		    },
                     addNewTemplate: function (templatedata) {
-			var createdTime=new Date().toLocaleString();
-			templatedata["created"]=createdTime;
-			templatedata["modified"]=createdTime;
-			this.axiosInstance.post("https://envriplus-provenance.test.fedcloud.eu/addTemplate",
-						{ 'info' : templatedata },
-						{ headers: this.createJwtHeaderData() }
-			)
-			.then( response => {
-				this.axiosInstance.post("https://envriplus-provenance.test.fedcloud.eu/getTemplateList",
-				{},
-				{ headers: this.createJwtHeaderData() }
+
+			var svgdiv=document.getElementById("svg");
+			var divchildren = svgdiv.children;
+			var svgfound=false;
+			for (var i = 0; i < divchildren.length; i++) {
+				console.log(divchildren[i]);
+				if (divchildren[i].tagName=="svg") {
+					console.log("SVG FOUND");
+					svgfound=true;
+				}
+			}
+			
+
+			if (	templatedata["title"]=="" || 
+				templatedata["subject"]=="" || 
+				templatedata["description"]=="" || 
+				templatedata["type"]=="" || 
+				templatedata["creator"]=="" ||
+				templatedata["prov"]=="" ) {
+				this.showMissingInfoModal = true;
+			} else if (svgfound==false){
+				this.showBadTemplateModal = true;
+			} else {
+			
+				var createdTime=new Date().toLocaleString();
+				templatedata["created"]=createdTime;
+				templatedata["modified"]=createdTime;
+				this.axiosInstance.post("https://envriplus-provenance.test.fedcloud.eu/addTemplate",
+							{ 'info' : templatedata },
+							{ headers: this.createJwtHeaderData() }
 				)
-				.then( response => { 
-					this.templates = response.data;
-					console.log(response); 
+				.then( response => {
+					this.axiosInstance.post("https://envriplus-provenance.test.fedcloud.eu/getTemplateList",
+					{},
+					{ headers: this.createJwtHeaderData() }
+					)
+					.then( response => { 
+						this.templates = response.data;
+						console.log(response); 
+					})
+					.catch(function(error) {console.log(error)})
 				})
-				.catch(function(error) {console.log(error)})
-			})
-			.catch(function(error) {console.log(error)});
-			this.showModal = false;
-			this.firstForm = true;
+				.catch(function(error) {console.log(error)});
+				this.showModal = false;
+				this.firstForm = true;
+			}
                     },
                     changeExistingTemplate: function (templatedata) {
 			templatedata["modified"]=new Date().toLocaleString();
