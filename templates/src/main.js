@@ -2,6 +2,9 @@
 
 import Vue from 'vue/dist/vue.js';
 import * as Icon from 'vue-awesome';
+
+import svgPanZoom from "svg-pan-zoom";
+
 import axios from 'axios';
 import https from 'https';
 import FileReader  from './FileReader.vue';
@@ -242,25 +245,60 @@ var modal = Vue.component('modal',{
 Vue.component('icon', Icon)
 
         var myList=Vue.component('template-item', {
-          props: ['title', 'subject', 'description', 'type', 'coverage', 'comment', 'creator', 'created', 'modified', 'prov', 'provsvg', 
+          props: ['tid', 'panZoomInstance', 'title', 'subject', 'description', 'type', 'coverage', 'comment', 'creator', 'created', 'modified', 'prov', 'provsvg', 
 			'urlprovn','urlprovxml','urlprovjson','urlprovrdftrig','urlprovrdfxml','owner', 'jwt'],
 	  mounted: function() {
 		var svg = new DOMParser().parseFromString(this.provsvg, 'application/xml').documentElement;
-		svg.style.width="100%";
-		svg.style.height="100%";
-		svg.style.maxheight="200px";
-		//svg.style.position="absolute";
 		//svg.style.background="yellow";
-		console.log(this.$refs.canvas);
-  		var el = this.$refs.canvas; 
+		svg.style.display="inline";
+		svg.style.width="inherit";
+		svg.style.minwidth="inherit";
+		svg.style.maxwidth="inherit";
+		//svg.style.width="100%";
+		svg.style.height="inherit";
+		svg.style.minheight="inherit";
+		svg.style.maxheight="inherit";
+		//svg.style.height="100%";
+		svg.style.maxheight="200px";
+		console.log(this.tid)
+		console.log(this.title)
+		svg.id=this.tid;
+
 		
+
+		console.log(this.$refs.canvas);
+  		//var el = this.$refs.canvas; 
+  		var el = this.$refs.canvas.parentElement; 
+		el.style.border="thin solid #000000";	
+		el.style.boxSizing="border-box";	
+		el.style.borderBottom="thin solid #000000";	
+
 		while (el.firstChild) {
 		     console.log("REMOVING");
 		    el.removeChild(el.firstChild);
 		}
-  		el.appendChild( el.ownerDocument.importNode(svg, true));
+  		var svgappended=el.appendChild( el.ownerDocument.importNode(svg, true));
+
 		el.style.maxheight="300px";
 		el.style.height="300px";
+		
+		var svgnodes=svgappended.querySelectorAll("*");
+		for (var idx=0; idx<svgnodes.length; idx++) 
+			svgnodes[idx].removeAttribute("xlink:href"); 
+
+		//this.panZoomInstance = svgPanZoom(svgappended, {
+		svgPanZoom(svgappended, {
+			zoomEnabled: true,
+			controlIconsEnabled: true,
+			fit: true,
+			center: true,
+			minZoom: 0.1
+		});
+			
+		//svg.style.position="absolute";
+
+
+
 		//el.style.height="100%";
 		//el.style.width="50%";
 		//el.style.height="300px";
@@ -274,7 +312,8 @@ Vue.component('icon', Icon)
 					//<tr><td style="padding 50px 0"><b>Comment:</b> {{ comment }}</td></tr> \
           template: ` <tr> 
 			<td style="border-bottom: 1px solid black; "> \
-			    <table style="line-height: 1;  padding:0.5rem 0.5rem ! important;"> \
+			<div>
+			    <table id="metadata" ref="metadata" style="line-height: 1;  padding:0.5rem 0.5rem ! important;"> \
 					<tr><td nowrap><b>Title:</b> {{ title }}</td></tr> \
 					<tr><td><b>Description:</b> <label style="max-width: 512px; word-wrap: break-word; cursor: default">{{ description }}</label></td></tr> \
 					<tr><td><b>Creator:</b> {{ creator }}</td></tr> \
@@ -289,12 +328,12 @@ Vue.component('icon', Icon)
 					<tr><td><b>Created:</b> {{ created }}</td></tr> \
 					<tr><td><b>Modified:</b> {{ modified }}</td></tr> \
 			    </table> \
+			</div> \
 			</td> \
 			<td style="border-bottom: 1px solid black; "> \
 				<div class="wrapper" style="width: 100%; height: 100%"> \
 					<div class="container" style="height: 100%; margin: 0 auto;  position: relative;" id="canvas" ref="canvas"> \
-					//<div class="container" style="width: 50%; margin: 0 auto; maxwidth: 300px; position: relative;" id="canvas" ref="canvas"> 
-					</div> \
+					</div>  \
 				</div> \
 			</td>
             <td style="border-bottom: 1px solid black; " v-if='jwt'><button :disabled="owner==0" v-on:click="$emit(\'edit\')"><icon name="edit" style="color: #000000"></icon></button></td> \
