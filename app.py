@@ -518,9 +518,12 @@ def getTemplatesIdExpand(id=""):
 			bindstream.seek(0)
 			bindings_doc=provRead(bindstream)
 			bindings_dict=provconv.read_binding(bindings_doc)
+			bindings_ns=bindings_doc.namespaces
 		else:
-			bindings_doc=json.reads(bindings)
-			bindings_dict=provconv.read_binding_v3(bindings_doc)	
+			bindings_doc=json.loads(bindings)
+			bindings=provconv.read_binding_v3(bindings_doc)
+			bindings_dict=bindings["binddict"]	
+			bindings_ns=bindings["namespaces"]	
 
 		templatestream=io.StringIO()
 		templatedata=json.loads(getTemplateByID(id))
@@ -528,7 +531,8 @@ def getTemplatesIdExpand(id=""):
 		templatestream.seek(0)
 		template_doc=provRead(templatestream)
 
-		template=provconv.set_namespaces(bindings_doc.namespaces, template_doc)
+		template=provconv.set_namespaces(bindings_ns, template_doc)
+		log.error(bindings_ns)
 		log.error(bindings_doc)
 		log.error(template)
 		

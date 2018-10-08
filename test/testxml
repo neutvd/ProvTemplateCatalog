@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+   xmlns:ex="http://example.com#"
+   xmlns:prov="http://www.w3.org/ns/prov#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+  <rdf:Description rdf:about="http://openprovenance.org/vargen#readingActivity">
+    <prov:wasAssociatedWith rdf:resource="http://openprovenance.org/var#readingAgent"/>
+    <rdf:type rdf:resource="http://www.w3.org/ns/prov#Activity"/>
+    <prov:used rdf:resource="http://openprovenance.org/vargen#measurementData"/>
+    <prov:atLocation rdf:resource="http://openprovenance.org/var#dendrometer"/>
+    <rdf:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DendrometerReadingActivity</rdf:type>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://openprovenance.org/vargen#measuringActivity">
+    <prov:atLocation rdf:resource="http://openprovenance.org/var#tree"/>
+    <prov:qualifiedAssociation rdf:resource="http://openprovenance.org/vargen#dendroAssoc"/>
+    <rdf:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DendrometerMeasurementActivity</rdf:type>
+    <rdf:type rdf:resource="http://www.w3.org/ns/prov#Activity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://openprovenance.org/var#dendrometer">
+    <rdf:type rdf:resource="http://www.w3.org/ns/prov#Agent"/>
+    <rdf:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dendrometer</rdf:type>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://openprovenance.org/vargen#readingData">
+    <prov:wasGeneratedBy rdf:resource="http://openprovenance.org/vargen#readingActivity"/>
+    <prov:wasAttributedTo rdf:resource="http://openprovenance.org/var#readingAgent"/>
+    <ex:comment rdf:resource="http://openprovenance.org/var#comment"/>
+    <prov:wasDerivedFrom rdf:resource="http://openprovenance.org/vargen#measurementData"/>
+    <prov:value rdf:resource="http://openprovenance.org/var#readValue"/>
+    <rdf:type rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdf:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DendrometerReading</rdf:type>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://openprovenance.org/var#dataset">
+    <rdf:type rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <prov:hadMember rdf:resource="http://openprovenance.org/vargen#readingData"/>
+    <rdf:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dataset</rdf:type>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://openprovenance.org/vargen#dendroAssoc">
+    <prov:agent rdf:resource="http://openprovenance.org/var#dendrometer"/>
+    <prov:hadPlan rdf:resource="http://openprovenance.org/var#dendroPlan"/>
+    <rdf:type rdf:resource="http://www.w3.org/ns/prov#Association"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://openprovenance.org/var#organization">
+    <rdf:type rdf:resource="http://www.w3.org/ns/prov#Organization"/>
+    <rdf:type rdf:resource="http://www.w3.org/ns/prov#Agent"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://openprovenance.org/vargen#measurementData">
+    <rdf:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DendrometerMeasurement</rdf:type>
+    <prov:wasGeneratedBy rdf:resource="http://openprovenance.org/vargen#measuringActivity"/>
+    <rdf:type rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://openprovenance.org/var#dendroPlan">
+    <rdf:type rdf:resource="http://www.w3.org/ns/prov#plan"/>
+    <rdf:type rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://openprovenance.org/var#readingAgent">
+    <rdf:type rdf:resource="http://www.w3.org/ns/prov#Agent"/>
+    <rdf:type rdf:resource="http://www.w3.org/ns/prov#Person"/>
+    <prov:actedOnBehalfOf rdf:resource="http://openprovenance.org/var#organization"/>
+  </rdf:Description>
+</rdf:RDF>
+
