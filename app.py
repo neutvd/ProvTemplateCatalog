@@ -27,7 +27,13 @@ import io
 
 import cgi
 
+import urllib2, requests, base64
+
 from config import CONFIG
+from config import PROVSTORE 
+
+import datetime
+ 
 
 
 #bad test
@@ -178,7 +184,7 @@ def updateTemplate():
                         retr_url_xml=templateInfo['retr_url_xml']
                         retr_url_json=templateInfo['retr_url_json']
 
-			log.error("provsvg " + repr(provsvg))
+			log.debug("provsvg " + repr(provsvg))
 		
 
 			db.Templates.update_one({'_id':ObjectId(templateId)},{'$set':{
@@ -408,20 +414,20 @@ def provRead(source, format=None):
 
 @application.route('/templates/<id>/<format>', methods=['GET'])
 def getTemplatesIdFormat(id="", format=""):
-	log.error("getTemplateIDFormat")
+	log.debug("getTemplateIDFormat")
 	try:
 		tmpl=json.loads(getTemplateByID(id))
 		#log.error(repr(tmpl))
 		provdata=tmpl["prov"]
-		log.error(provdata)	
+		log.debug(provdata)	
 		#tb=io.TextIOBase(provdata)
-		log.error("Write provdata into stream obj")
+		log.debug("Write provdata into stream obj")
 		tb=io.StringIO()
 		tb.write(provdata)
 		#tb.flush()
 		if hasattr(tb, "read"):
-			log.error("IT IS A STREAM")
-		log.error("Log stream obj")
+			log.debug("IT IS A STREAM")
+		log.debug("Log stream obj")
 		#log.error(tb.getvalue())
 		tb.seek(0)
 		#log.error(tb.read())
@@ -429,18 +435,18 @@ def getTemplatesIdFormat(id="", format=""):
 
 		
 
-		log.error(repr(provrep.namespaces))
+		log.debug(repr(provrep.namespaces))
 
-		log.error(repr(provrep.flattened().records))
+		log.debug(repr(provrep.flattened().records))
 
-		log.error(repr(provrep))
+		log.debug(repr(provrep))
 
 		for rec in provrep.flattened().records:
-			log.error(repr(rec))
+			log.debug(repr(rec))
 
 		#fix namespace issuces
 		for b in provrep.bundles:
-			log.error(repr(b.namespaces))
+			log.debug(repr(b.namespaces))
 			b._namespaces=provrep._namespaces	
 			#b._namespaces=prov.model.NamespaceManager()	
 	
@@ -476,21 +482,61 @@ def getTemplatesIdFormat(id="", format=""):
 	except  Exception, e:
 		return str(e) +  traceback.format_exc()
 
-@application.route('/templates/<id>/expand', methods=['GET'])
+@application.route('/templates/<id>/expand', methods=['GET', 'POST'])
 def getTemplatesIdExpand(id=""):
-	log.error("getTemplateIDExpand")
+	log.debug("getTemplateIDExpand")
 	ret=""
 	try:
+
+		writeprov=False
 		bindver="v2"
-		bindvernew=request.args.get('bindver')
-		log.error(bindvernew)
+		outfmt="provn"
+		bindings=None
+
+		writeprovarg=None
+		bindvernew=None
+		fmt=None
+
+		#check get or post
+		if request.method=="GET":		
+
+			writeprovarg=request.args.get('writeprov')
+	
+			bindvernew=request.args.get('bindver')
+	
+			bindings=request.args.get('bindings')
+	
+			fmt=request.args.get('fmt')
+
+		elif request.method=="POST":
+			input_json = request.get_json(force=True)
+
+			try:
+				writeprovarg=input_json['writeprov']
+			except:
+				pass
+
+			try:
+				bindvernew=input_json['bindver']			
+			except:
+				pass
+
+			try:
+				bindings=input_json['bindings']
+			except:
+				pass
+
+			try:
+				fmt=input_json['fmt']
+			except:
+				pass
+			
+		if writeprovarg=="true":
+			writeprov=True
 		if bindvernew=="v3":
 			bindver="v3"
-		bindings=request.args.get('bindings')
 		if not bindings:
 			return "Missing bindings file.", status.HTTP_400_BAD_REQUEST
-		outfmt="provn"
-		fmt=request.args.get('fmt')
 		if fmt:
 			if fmt not in ["provn", "provjson",  "trig",  "provxml", "rdfxml" ]:
 				return "Output format " + fmt + " not supported.", status.HTTP_400_BAD_REQUEST
@@ -503,10 +549,10 @@ def getTemplatesIdExpand(id=""):
 		#		outfmt=outfmt.replace("xml", "")
 		#
 		#		else:
-
+		
 				
-		log.error(bindings)
-		log.error(outfmt)
+		log.debug(bindings)
+		log.debug(outfmt)
 
 
 		bindings_dict=None
@@ -532,9 +578,9 @@ def getTemplatesIdExpand(id=""):
 		template_doc=provRead(templatestream)
 
 		template=provconv.set_namespaces(bindings_ns, template_doc)
-		log.error(bindings_ns)
-		log.error(bindings_doc)
-		log.error(template)
+		log.debug(bindings_ns)
+		log.debug(bindings_doc)
+		log.debug(template)
 		
 		exp=provconv.instantiate_template(template, bindings_dict)
         	#if outfmt in ["xml", "provn", "json"]:
@@ -543,34 +589,86 @@ def getTemplatesIdExpand(id=""):
         	#       	if outfmt == "rdf":
           	#              	outfmt="xml"
            	#     		return(exp.serialize(format="rdf", rdf_format=outfmt))
-		res=None
-		mime=None
-		filename=None
-		#res=io.StringIO()
-		if outfmt=="provxml":
-			res=exp.serialize(None, "xml")
-			mime="text/xml"
-			filename=id+".expanded.xml"
-		elif outfmt=="provjson":
-			res=exp.serialize(None, "json")
-			mime="application/json"
-			filename=id+".expanded.json"
-		elif outfmt=="trig":
-			res=exp.serialize(None, "rdf", rdf_format="trig")
-			mime="application/trig"
-			filename=id+".expanded.trig"
-		elif outfmt=="rdfxml":
-			res=exp.serialize(None, "rdf", rdf_format="xml")
-			mime="application/rdf+xml"
-			filename=id+".expanded.rdf"
-		elif outfmt=="provn":
-			res=exp.serialize(None, "provn")
-			mime="text/provenance-notation"
-			filename=id+".expanded.provn"
+		
+		if not writeprov:
+			res=None
+			mime=None
+			filename=None
+			#res=io.StringIO()
+			if outfmt=="provxml":
+				res=exp.serialize(None, "xml")
+				mime="text/xml"
+				filename=id+".expanded.xml"
+			elif outfmt=="provjson":
+				res=exp.serialize(None, "json")
+				mime="application/json"
+				filename=id+".expanded.json"
+			elif outfmt=="trig":
+				res=exp.serialize(None, "rdf", rdf_format="trig")
+				mime="application/trig"
+				filename=id+".expanded.trig"
+			elif outfmt=="rdfxml":
+				res=exp.serialize(None, "rdf", rdf_format="xml")
+				mime="application/rdf+xml"
+				filename=id+".expanded.rdf"
+			elif outfmt=="provn":
+				res=exp.serialize(None, "provn")
+				mime="text/provenance-notation"
+				filename=id+".expanded.provn"
+			else:
+				return("Format " + format + " not implemented")
+			#log.error(res)	
+	
+			return Response(res, mimetype=mime, headers={ "Content-Disposition":"attachment;filename="+filename})	
 		else:
-			return("Format " + format + " not implemented")
-		#log.error(res)	
-		return Response(res, mimetype=mime, headers={ "Content-Disposition":"attachment;filename="+filename})	
+			#we always use provxml
+
+			ident=None
+			for b in exp.bundles:
+				log.debug(b.identifier)
+				ident=b.identifier
+			try:	
+				log.debug("Writing to Provstore")
+				res=exp.serialize(None, "rdf", rdf_format="turtle")
+				
+
+				log.debug("Serialized")
+				if ident==None:
+					ident="http://graphname.test/" + id+"_"+datetime.datetime.now().isoformat()
+				else:
+					ident=ident._str + "_"+datetime.datetime.now().isoformat()
+
+				log.error("Writing triples to Provstore with ident " + ident)
+				#add sime metadata
+
+				metatrips=" " + ident + " dct:created " + "'"+datetime.datetime.now().isoformat()+"'^^xsd:datetime ." 
+				extra_ns="@prefix dct: <http://purl.org/dc/terms/> . @prefix xsd: <http://www.w3.org/2001/XMLSchema#> . " 
+				
+
+				datastring=extra_ns + res + metatrips
+
+				log.debug("Writing triples to Provstore:" + datastring)
+
+
+				r = requests.post("http://oil-e.vlan400.uvalight.net/prov/data?graph=" + ident,
+						headers={
+							"Host" : PROVSTORE["Host"],
+							"Content-Type" : "text/turtle",
+							"Authorization" : PROVSTORE["Authorization"]
+						},
+						data=datastring
+				)
+
+				log.error(repr(r))
+				return Response(r.text)
+			except Exception, e:
+				return Response("Failed to write result with exception " + str(e))				
+				
+			#we need a bundle name
+			#we create a named graph consisting of the template ID and a timestamp and attach these values to the named graph
+						
+
+				
 
 	except Exception,e:
 		log.error("ERROR : " + str(e))
@@ -654,8 +752,8 @@ def login(provider_name):
 
 		log.info("Created Identity: " + identity)
 		ret = create_jwt(identity=identity)#
-		log.error(ret + "\n")
-		log.error(decode_jwt(ret))
+		log.debug(ret + "\n")
+		log.debug(decode_jwt(ret))
 
 		user=result.user.name
 
