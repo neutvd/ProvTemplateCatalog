@@ -42,3 +42,9 @@ CONFIG = {
 	'scope': oauth2.Google.user_info_scope + ['profile', 'email'],  
     }
 }
+
+PROVSTORE = {
+    'Host': '<url of  Triplestore>',
+    'Authorization' : '<Base64 encoding of username and password for Triplestore>'
+}
+
