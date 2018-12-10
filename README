@@ -24,6 +24,9 @@ Required python components:
 	sudo pip install pymongo
 	sudo pip install python-openid
 	sudo pip install pyOpenSSL
+	sudo pip install prov
+	sudo pip install pydot
+	sudo pip install requests
 
 
 Javascript environment:
