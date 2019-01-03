@@ -56,7 +56,7 @@ def render(result=None, popup_js=''):
 		result=result,
 		popup_js=popup_js,
 		title='MongoDB with Flask, vue.js using flask-jwt-simple and Authomatic',
-		base_url='https://envriplus-provenance.test.fedcloud.eu/',
+		base_url='https://localhost/',
 		oauth1='',
 		oauth2=''
 	)
