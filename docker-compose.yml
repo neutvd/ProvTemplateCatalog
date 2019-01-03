@@ -15,7 +15,7 @@ services:
         container_name: "prov-template"
         image: prov-template-svc:latest
         ports:
-          - 8082:8082
+          - 8082:80
         links:
           - mongo-db
         depends_on:
