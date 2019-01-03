@@ -28,7 +28,9 @@ WORKDIR /
 RUN git clone https://github.com/neutvd/ProvTemplateCatalog.git
 
 RUN cd ProvTemplateCatalog && npm install -g webpack && npm install axios && \
-    cd templates && npm install && npm install --save vue
+    cd templates && npm install && npm install --save vue && \
+    cp -a . /var/www/html
+    
 
 EXPOSE 80
 CMD ["/usr/sbin/apachectl", "-DFOREGROUND"]
