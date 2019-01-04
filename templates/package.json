@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "List and configure Semantic Repositories",
   "dependencies": {
+    "axios": "^0.18.0",
     "vue": "^2.5.17"
   },
   "devDependencies": {
@@ -17,11 +18,12 @@
     "vue-awesome": "^2.2.0",
     "vue-html-loader": "^1.0.0",
     "vue-loader": "^7.3.0",
+    "svg-pan-zoom": "^3.6.0",
     "webpack": "^1.12.2",
     "webpack-cli": "^3.1.0"
   },
   "author": "doron.goldfarb@umweltbundesamt.at",
-  "scripts" : {
-        "build": "webpack --config webpack.config.js"
+  "scripts": {
+    "build": "webpack --config webpack.config.js"
   }
 }

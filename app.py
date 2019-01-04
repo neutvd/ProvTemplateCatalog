@@ -37,7 +37,7 @@ import datetime
 
 
 #bad test
-sys.path.insert(0, '/home/cloudadm/EnvriProvTemplates/provtemplates')
+sys.path.insert(0, '/data/EnvriProvTemplates/provtemplates')
 import provconv
 
 class CustomFlask(Flask):
@@ -92,7 +92,7 @@ log.setLevel(logging.INFO)
 log.addHandler(handler)
 #log.addHandler(handler)
 
-client = MongoClient('127.0.0.1:27017')
+client = MongoClient('mongo-db:27017')
 db = client.TemplateData
 
 
