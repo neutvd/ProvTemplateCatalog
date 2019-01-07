@@ -59,4 +59,5 @@ RUN mkdir -p -m 0711 /etc/ssl/private/ && \
             
 RUN echo "ServerName prov-template" >> /etc/httpd/conf/httpd.conf
 EXPOSE 80
+EXPOSE 443
 CMD ["/usr/sbin/apachectl", "-DFOREGROUND"]
