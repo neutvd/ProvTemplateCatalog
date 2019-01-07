@@ -49,6 +49,10 @@ COPY example_config.py /var/www/repoConf/config.py
 
 WORKDIR /data/
 RUN git clone https://github.com/EnvriPlus-PROV/EnvriProvTemplates.git
+WORKDIR /data/EnvriProvTemplates
+RUN python setup.py install
+
+WORKDIR /
 
 RUN mkdir -p -m 0711 /etc/ssl/private/ && \
     openssl genrsa -des3 -passout pass:x -out /tmp/server.pass.key 2048 && \
@@ -58,7 +62,7 @@ RUN mkdir -p -m 0711 /etc/ssl/private/ && \
             -subj "/C=NL/ST=Utrecht/L=Utrecht/O=KNMI/OU=RDWD/CN=prov-template/emailAddress=eu-team@knmi.nl" && \
     openssl x509 -req -sha256 -days 365 -in /etc/ssl/certs/server.csr \
             -signkey /etc/ssl/private/apache.key -out /etc/ssl/certs/apache.crt
-            
+RUN touch /var/www/repoConf/out.log && chown apache.apache /var/www/repoConf/out.log && chmod 600 /var/www/repoConf/out.log
 RUN echo "ServerName prov-template" >> /etc/httpd/conf/httpd.conf
 EXPOSE 80
 EXPOSE 443
