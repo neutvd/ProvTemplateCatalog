@@ -31,8 +31,7 @@ WORKDIR /
 RUN npm install -g webpack && npm install axios
 
 RUN mkdir -p /tmp/ProvTemplateCatalog/templates /var/www/repoConf \
-             /var/www/html/static/dist \
-             /data/EnvriProvTemplates/provtemplates
+             /var/www/html/static/dist /data/
 
 ## install deps in separate step to use docker's caching 
 COPY ./templates/package.json /tmp/ProvTemplateCatalog/templates
@@ -47,6 +46,9 @@ COPY example_conf_apache2_sites-enabled.conf /etc/httpd/conf.d/prov-template.con
 COPY example_wsgi_conf.conf /var/www/repoConf/repoConf.wsgi
 COPY app.py /var/www/repoConf/
 COPY example_config.py /var/www/repoConf/config.py
+
+WORKDIR /data/
+RUN git clone https://github.com/EnvriPlus-PROV/EnvriProvTemplates.git
 
 RUN mkdir -p -m 0711 /etc/ssl/private/ && \
     openssl genrsa -des3 -passout pass:x -out /tmp/server.pass.key 2048 && \
