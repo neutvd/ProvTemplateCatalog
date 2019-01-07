@@ -49,10 +49,14 @@ COPY app.py /var/www/repoConf/
 COPY example_config.py /var/www/repoConf/config.py
 
 RUN mkdir -p -m 0711 /etc/ssl/private/ && \
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout /etc/ssl/private/apache.key -out /etc/ssl/certs/apache.crt \
-    -subj "/C=NL/ST=Utrecht/L=Utrecht/O=KNMI/OU=RDWD/CN=prov-template/emailAddress=eu-team@knmi.nl"
-
-RUN echo "ServerName localhost" >> /etc/httpd/conf/httpd.conf
+    openssl genrsa -des3 -passout pass:x -out /tmp/server.pass.key 2048 && \
+    openssl rsa -passin pass:x -in /tmp/server.pass.key -out /etc/ssl/private/apache.key && \
+    rm -f /tmp/server.pass.key && \
+    openssl req -new -key /etc/ssl/private/apache.key -out /etc/ssl/certs/server.csr \
+            -subj "/C=NL/ST=Utrecht/L=Utrecht/O=KNMI/OU=RDWD/CN=prov-template/emailAddress=eu-team@knmi.nl" && \
+    openssl x509 -req -sha256 -days 365 -in /etc/ssl/certs/server.csr \
+            -signkey /etc/ssl/private/apache.key -out /etc/ssl/certs/apache.crt
+            
+RUN echo "ServerName prov-template" >> /etc/httpd/conf/httpd.conf
 EXPOSE 80
 CMD ["/usr/sbin/apachectl", "-DFOREGROUND"]
