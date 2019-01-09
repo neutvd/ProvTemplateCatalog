@@ -66,4 +66,6 @@ RUN touch /var/www/repoConf/out.log && chown apache.apache /var/www/repoConf/out
 RUN echo "ServerName prov-template" >> /etc/httpd/conf/httpd.conf
 EXPOSE 80
 EXPOSE 443
+ENV FLASK_ENV=development
 CMD ["/usr/sbin/apachectl", "-DFOREGROUND"]
+# CMD ["python", "/var/www/repoConf/app.py"]
