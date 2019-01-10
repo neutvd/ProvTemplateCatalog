@@ -40,7 +40,10 @@ RUN npm install && npm install --save vue
 COPY . /tmp/ProvTemplateCatalog
 RUN npm run build
 RUN cp --recursive --dereference /tmp/ProvTemplateCatalog/static /var/www/html
+RUN cp --recursive --dereference /tmp/ProvTemplateCatalog/static /var/www/repoConf
 COPY templates/index.html /var/www/html
+RUN mkdir /var/www/repoConf/templates
+COPY templates/index.html /var/www/repoConf/templates
 
 COPY example_conf_apache2_sites-enabled.conf /etc/httpd/conf.d/prov-template.conf
 COPY example_wsgi_conf.conf /var/www/repoConf/repoConf.wsgi
@@ -59,11 +62,11 @@ RUN mkdir -p -m 0711 /etc/ssl/private/ && \
     openssl rsa -passin pass:x -in /tmp/server.pass.key -out /etc/ssl/private/apache.key && \
     rm -f /tmp/server.pass.key && \
     openssl req -new -key /etc/ssl/private/apache.key -out /etc/ssl/certs/server.csr \
-            -subj "/C=NL/ST=Utrecht/L=Utrecht/O=KNMI/OU=RDWD/CN=prov-template/emailAddress=eu-team@knmi.nl" && \
+            -subj "/C=NL/ST=Utrecht/L=Utrecht/O=KNMI/OU=RDWD/CN=ec2-54-229-229-46.eu-west-1.compute.amazonaws.com/emailAddress=eu-team@knmi.nl" && \
     openssl x509 -req -sha256 -days 365 -in /etc/ssl/certs/server.csr \
             -signkey /etc/ssl/private/apache.key -out /etc/ssl/certs/apache.crt
 RUN touch /var/www/repoConf/out.log && chown apache.apache /var/www/repoConf/out.log && chmod 600 /var/www/repoConf/out.log
-RUN echo "ServerName prov-template" >> /etc/httpd/conf/httpd.conf
+RUN echo "ServerName ec2-54-229-229-46.eu-west-1.compute.amazonaws.com" >> /etc/httpd/conf/httpd.conf
 EXPOSE 80
 EXPOSE 443
 ENV FLASK_ENV=development

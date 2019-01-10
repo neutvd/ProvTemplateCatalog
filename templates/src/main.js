@@ -372,7 +372,7 @@ Vue.component('icon', Icon)
 					rejectUnauthorized: false
 				})
 			});
-			this.axiosInstance.post("https://localhost/getTemplateList",
+			this.axiosInstance.post("https://ec2-54-229-229-46.eu-west-1.compute.amazonaws.com/getTemplateList",
 						{},
 						{ headers: this.createJwtHeaderData() }
 						)
@@ -400,7 +400,7 @@ Vue.component('icon', Icon)
 			this.user=null;
 			window.location.reload(true);
 			/*
-			this.axiosInstance.post("https://localhost/getTemplateList",
+			this.axiosInstance.post("https://ec2-54-229-229-46.eu-west-1.compute.amazonaws.com/getTemplateList",
 						{},
 						{ headers: this.createJwtHeaderData() }
 						)
@@ -412,7 +412,7 @@ Vue.component('icon', Icon)
 			*/
 		    },
 		    convertProv: function (data, format) {
-			this.axiosInstance.post("https://localhost/renderProvFile", 
+			this.axiosInstance.post("https://ec2-54-229-229-46.eu-west-1.compute.amazonaws.com/renderProvFile", 
 						{'provfile':data, 'format':format},
 						{ headers: this.createJwtHeaderData()})
 			.then( response => {
@@ -435,7 +435,7 @@ Vue.component('icon', Icon)
 			this.curRep=this.templates[index];
 			this.showModal = true;
 			this.showAdd=false;
-			this.axiosInstance.post("https://localhost/getTemplate", {'id':this.templates[index]['id']})
+			this.axiosInstance.post("https://ec2-54-229-229-46.eu-west-1.compute.amazonaws.com/getTemplate", {'id':this.templates[index]['id']})
 			.then( response => {
 				this.curRep = response.data;
 				console.log(response);
@@ -464,12 +464,12 @@ Vue.component('icon', Icon)
 			this.showConfirmModal = true;
 		    },
 		    triggerDeleteConfirmed: function (template) {
-			this.axiosInstance.post("https://localhost/deleteTemplate",
+			this.axiosInstance.post("https://ec2-54-229-229-46.eu-west-1.compute.amazonaws.com/deleteTemplate",
 						{ 'id' : template['id'] }, 
 						{ headers: this.createJwtHeaderData() }
 			)
 			.then( response => {
-				this.axiosInstance.post("https://localhost/getTemplateList",
+				this.axiosInstance.post("https://ec2-54-229-229-46.eu-west-1.compute.amazonaws.com/getTemplateList",
 				{},
 				{ headers: this.createJwtHeaderData() }
 				)
@@ -510,12 +510,12 @@ Vue.component('icon', Icon)
 				var createdTime=new Date().toLocaleString();
 				templatedata["created"]=createdTime;
 				templatedata["modified"]=createdTime;
-				this.axiosInstance.post("https://localhost/addTemplate",
+				this.axiosInstance.post("https://ec2-54-229-229-46.eu-west-1.compute.amazonaws.com/addTemplate",
 							{ 'info' : templatedata },
 							{ headers: this.createJwtHeaderData() }
 				)
 				.then( response => {
-					this.axiosInstance.post("https://localhost/getTemplateList",
+					this.axiosInstance.post("https://ec2-54-229-229-46.eu-west-1.compute.amazonaws.com/getTemplateList",
 					{},
 					{ headers: this.createJwtHeaderData() }
 					)
@@ -532,13 +532,13 @@ Vue.component('icon', Icon)
                     },
                     changeExistingTemplate: function (templatedata) {
 			templatedata["modified"]=new Date().toLocaleString();
-			this.axiosInstance.post("https://localhost/updateTemplate",
+			this.axiosInstance.post("https://ec2-54-229-229-46.eu-west-1.compute.amazonaws.com/updateTemplate",
 						{ 'info' : templatedata },
 						{ headers: this.createJwtHeaderData() }
 			)
 			.then( response => {
 				console.log(response);
-				this.axiosInstance.post("https://localhost/getTemplateList",
+				this.axiosInstance.post("https://ec2-54-229-229-46.eu-west-1.compute.amazonaws.com/getTemplateList",
 				{},
 				{ headers: this.createJwtHeaderData() }
 				)
