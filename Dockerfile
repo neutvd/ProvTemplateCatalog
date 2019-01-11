@@ -6,7 +6,7 @@ USER root
 
 RUN yum update -y && yum install -y epel-release deltarpm && yum update -y
 
-RUN yum install -y git python-devel python2-pip npm httpd openssl mod_ssl mod_wsgi && \
+RUN yum install -y git python-devel python2-pip npm httpd openssl mod_ssl mod_wsgi graphviz && \
     yum clean all && rm -rf /var/cache/yum
 
 RUN pip install flask && \
@@ -30,21 +30,21 @@ WORKDIR /
 
 RUN npm install -g webpack && npm install axios
 
-RUN mkdir -p /tmp/ProvTemplateCatalog/templates /var/www/repoConf \
-             /var/www/html/static/dist /data/
+RUN mkdir -p /tmp/ProvTemplateCatalog/templates /var/www/repoConf /data/
 
 ## install deps in separate step to use docker's caching 
 COPY ./templates/package.json /tmp/ProvTemplateCatalog/templates
 WORKDIR /tmp/ProvTemplateCatalog/templates
 RUN npm install && npm install --save vue
+## Copy the application code and compile it.
 COPY . /tmp/ProvTemplateCatalog
 RUN npm run build
-RUN cp --recursive --dereference /tmp/ProvTemplateCatalog/static /var/www/html
+## Copy static content
 RUN cp --recursive --dereference /tmp/ProvTemplateCatalog/static /var/www/repoConf
-COPY templates/index.html /var/www/html
 RUN mkdir /var/www/repoConf/templates
 COPY templates/index.html /var/www/repoConf/templates
 
+## Setup the web server configuration.
 COPY example_conf_apache2_sites-enabled.conf /etc/httpd/conf.d/prov-template.conf
 COPY example_wsgi_conf.conf /var/www/repoConf/repoConf.wsgi
 COPY app.py /var/www/repoConf/
