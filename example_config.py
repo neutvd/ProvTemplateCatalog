@@ -26,7 +26,7 @@ CONFIG = {
         'consumer_secret': '<consumer_secret>',
         
         # But it is also an OAuth 2.0 provider and it needs scope.
-        'scope': oauth2.LinkedIn.user_info_scope,
+        'scope': "",
     },
     
     'google': {
