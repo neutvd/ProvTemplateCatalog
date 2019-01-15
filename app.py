@@ -64,14 +64,14 @@ def render(result=None, popup_js=''):
 def validateJwtUser(user, site):
 	try:
 		jwt_info=get_jwt()
-		log.info("JWT " + repr(jwt_info))
+		#log.info("JWT " + repr(jwt_info))
 		jwt_data=json.loads(jwt_info['sub'])
 		ok = ( user==jwt_data["userid"] and site==jwt_data["siteid"] )
-		log.info("INFO " + repr(jwt_data))
+		#log.info("INFO " + repr(jwt_data))
 		ok = ok or (jwt_data["userid"] =='30405800' and jwt_data["siteid"]=='3')
 		return ok
 	except Exception, e:
-		log.info("ERROR " + str(e))	
+		#log.info("ERROR " + str(e))	
 		return False
 	#workaround
 	#return True
