@@ -521,19 +521,19 @@ def getTemplatesIdExpand(id=""):
 			log.info(unicode(bindings))
 
 			try:
-				writeprovarg=request.args.get['writeprov']
+				writeprovarg=request.args.get('writeprov')
 				#writeprovarg=input_json['writeprov']
 			except:
 				pass
 
 			try:
-				bindvernew=request.args.get['bindver']			
+				bindvernew=request.args.get('bindver')
 				#bindvernew=input_json['bindver']			
 			except:
 				pass
 
 			try:
-				fmt=request.args.get['fmt']
+				fmt=request.args.get('fmt')
 				#fmt=input_json['fmt']
 			except:
 				pass
