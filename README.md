@@ -102,3 +102,111 @@ the software described in the previous section. You will need to
 change the -subj argument to openssl and replace 'CN=prov-template'
 with 'CN=<yourhostname>' and replace 'ServerName prov-template' to
 'ServerName <your-hostname>'.
+
+## Expanding templates
+
+### Example template (in provn): #TODO: Put our own template here
+```
+document
+  prefix xml <http://www.w3.org/XML/1998/namespace>
+  prefix foaf <http://xmlns.com/foaf/0.1/>
+  prefix rdfs <http://www.w3.org/2000/01/rdf-schema#>
+  prefix rdf <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+  prefix var <http://openprovenance.org/var#>
+  prefix tmpl <http://openprovenance.org/tmpl#>
+  prefix vargen <http://openprovenance.org/vargen#>
+  
+  bundle vargen:bundleId
+    prefix xml <http://www.w3.org/XML/1998/namespace>
+    prefix foaf <http://xmlns.com/foaf/0.1/>
+    prefix rdfs <http://www.w3.org/2000/01/rdf-schema#>
+    prefix rdf <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    prefix var <http://openprovenance.org/var#>
+    prefix tmpl <http://openprovenance.org/tmpl#>
+    prefix vargen <http://openprovenance.org/vargen#>
+    
+    wasAttributedTo(var:quote, var:author)
+    entity(var:quote, [prov:value='var:value'])
+    entity(var:author, [prov:type='prov:Person', foaf:name='var:name'])
+  endBundle
+endDocument
+```
+
+### Example bindings (in trig): # TODO: Put our own bindings here
+```
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix tmpl: <http://openprovenance.org/tmpl#> .
+@prefix var: <http://openprovenance.org/var#> .
+@prefix ex: <http://example.com/#> .
+ 
+var:author a prov:Entity;
+           tmpl:value_0 <http://orcid.org/0000-0002-3494-120X>.
+var:name   a prov:Entity;
+           tmpl:2dvalue_0_0 "Luc Moreau".
+var:quote  a prov:Entity;
+           tmpl:value_0 ex:quote1.
+var:value  a prov:Entity;
+           tmpl:2dvalue_0_0 "A Little Provenance Goes a Long Way".
+```
+
+### Python example to expand with GET
+```python
+import requests
+import urllib
+
+host_name = 'ec2-54-229-229-46.eu-west-1.compute.amazonaws.com'
+template_id = '5c3dbc4d5a13e60008b76240'
+trig_string = """
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix tmpl: <http://openprovenance.org/tmpl#> .
+@prefix var: <http://openprovenance.org/var#> .
+@prefix ex: <http://example.com/#> .
+ 
+var:author a prov:Entity;
+           tmpl:value_0 <http://orcid.org/0000-0002-3494-120X>.
+var:name   a prov:Entity;
+           tmpl:2dvalue_0_0 "Luc Moreau".
+var:quote  a prov:Entity;
+           tmpl:value_0 ex:quote1.
+var:value  a prov:Entity;
+           tmpl:2dvalue_0_0 "A Little Provenance Goes a Long Way".
+"""
+url_encoded_trig_string = urllib.urlencode({"bindings": trig_string})
+r = requests.get('https://' + host_name + '/templates/' + template_id + 
+    '/expand?fmt=provjson&writeprov=false&bindver=v2&' + url_encoded_trig_string,
+    verify=False) 
+
+print r.text
+```
+
+### Python example to expand with POST
+```python
+import requests
+
+host_name = 'ec2-54-229-229-46.eu-west-1.compute.amazonaws.com'
+template_id = '5c3dbc4d5a13e60008b76240'
+trig_string = """
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix tmpl: <http://openprovenance.org/tmpl#> .
+@prefix var: <http://openprovenance.org/var#> .
+@prefix ex: <http://example.com/#> .
+ 
+var:author a prov:Entity;
+           tmpl:value_0 <http://orcid.org/0000-0002-3494-120X>.
+var:name   a prov:Entity;
+           tmpl:2dvalue_0_0 "Luc Moreau".
+var:quote  a prov:Entity;
+           tmpl:value_0 ex:quote1.
+var:value  a prov:Entity;
+           tmpl:2dvalue_0_0 "A Little Provenance Goes a Long Way".
+"""
+
+r = requests.post('https://' + host_name + '/templates/' + template_id + 
+    '/expand?fmt=provjson&writeprov=false&bindver=v2',
+        data=trig_string, verify=False)
+        
+print r.text        
+```           
