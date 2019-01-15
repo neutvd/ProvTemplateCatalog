@@ -63,12 +63,15 @@ def render(result=None, popup_js=''):
 
 def validateJwtUser(user, site):
 	try:
-		jwt_data=json.loads(get_jwt()['sub'])
+		jwt_info=get_jwt()
+		log.info("JWT " + repr(jwt_info))
+		jwt_data=json.loads(jwt_info['sub'])
 		ok = ( user==jwt_data["userid"] and site==jwt_data["siteid"] )
-		#log.info(repr(jwt_data))
+		log.info("INFO " + repr(jwt_data))
 		ok = ok or (jwt_data["userid"] =='30405800' and jwt_data["siteid"]=='3')
 		return ok
-	except:
+	except Exception, e:
+		log.info("ERROR " + str(e))	
 		return False
 	#workaround
 	#return True
@@ -509,25 +512,29 @@ def getTemplatesIdExpand(id=""):
 			fmt=request.args.get('fmt')
 
 		elif request.method=="POST":
-			input_json = request.get_json(force=True)
+			bindings=None
+			try:
+				bindings = request.get_data()
+			except Exception, e:
+				 log.info(str(e))
+
+			log.info(unicode(bindings))
 
 			try:
-				writeprovarg=input_json['writeprov']
+				writeprovarg=request.args.get['writeprov']
+				#writeprovarg=input_json['writeprov']
 			except:
 				pass
 
 			try:
-				bindvernew=input_json['bindver']			
+				bindvernew=request.args.get['bindver']			
+				#bindvernew=input_json['bindver']			
 			except:
 				pass
 
 			try:
-				bindings=input_json['bindings']
-			except:
-				pass
-
-			try:
-				fmt=input_json['fmt']
+				fmt=request.args.get['fmt']
+				#fmt=input_json['fmt']
 			except:
 				pass
 			
@@ -560,7 +567,7 @@ def getTemplatesIdExpand(id=""):
 		if bindver=="v2":
 			#create stream from bindings
 			bindstream=io.StringIO()
-			bindstream.write(bindings)
+			bindstream.write(unicode(bindings))
 			bindstream.seek(0)
 			bindings_doc=provRead(bindstream)
 			bindings_dict=provconv.read_binding(bindings_doc)
