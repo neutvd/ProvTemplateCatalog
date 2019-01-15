@@ -5,6 +5,7 @@ This service uses a self issued certificate
 
 Proof of concept: MongoDB Backend with a Flask API and a vue.js frontend, using flask-jwt-simple for API authorization and Authomatic for user authentication via oauth2 services from existing social media sites.
 
+## Basic setup
 The basic setup of vue.js follows
 
 	https://skyronic.com/blog/vue-project-scratch
@@ -16,91 +17,79 @@ Authomatic integration based on
 Requires MongoDb engine
 
 Required python components:
-
-	sudo pip install flask
-	sudo pip install flask-jwt-simple
-	sudo pip install flask-API
-	sudo pip install authomatic
-	sudo pip install pymongo
-	sudo pip install python-openid
-	sudo pip install pyOpenSSL
-	sudo pip install prov
-	sudo pip install pydot
-	sudo pip install requests
-
+```
+sudo pip install flask
+sudo pip install flask-jwt-simple
+sudo pip install flask-API
+sudo pip install authomatic
+sudo pip install pymongo
+sudo pip install python-openid
+sudo pip install pyOpenSSL
+sudo pip install prov
+sudo pip install pydot
+sudo pip install requests
+```
 
 Javascript environment:
-	
-	sudo npm install -g webpack
-	sudo npm install axios
-
-	in "template" directory:
-		npm install
-		npm install --save vue
-
+```	
+sudo npm install -g webpack
+sudo npm install axios
+```
+In "template" directory:
+```	
+npm install
+npm install --save vue
+```
 		
 ----- 
 
+## Setup on Ubuntu without Docker containers
 Setup on Ubuntu without using docker container.:
 
-	x)
-	Install necessary packages
+1. Install necessary packages
+1. Set up MongoDB db with name TemplateData
+   	create collection "Templates"
+1. 	Change server url from localhost to your hostname in
+   		app.py 
+   		templates/src/main.js
+1. Change ServerName value to your hostname in
+   		example_conf_apache2_sites-enabled.conf
+1. Provide social media oauth2 app key and secret for each used site in config.py.
+       For github, the instructions can be found at https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/.
+1. 	Set secret keys in app.py
+1. Use webpack to compile build.js from templates/src/main.js
+   put or symlink build.js in static/js/build.js
+   ```
+        cd templates
+        npm run build
+   ```
+1. Setup virtualhost in etc/apache2/sites-enabled
+1. Create wsgi file
+1. Mandatory global (eg in apache2.conf) WSGI Setting for JWT to work:
+   		WSGIPAssAuthorization On
 
-	x)
-	Set up MongoDB db with name TemplateData
-	create collection "Templates"
-
-	x)
-	Change server url from localhost to your hostname in
-		app.py 
-		templates/src/main.js
-        
-    x)
-    Change ServerName value to your hostname in
-		example_conf_apache2_sites-enabled.conf
-	
-	x)
-	Provide social media oauth2 app key and secret for each used site in config.py.
-    For github, the instructions can be found at https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/.
-
-	x)
-	Set secret keys in app.py
-
-	x)
-	Use webpack to compile build.js from templates/src/main.js
-	put or symlink build.js in static/js/build.js
-		cd templates
-		npm run build
-
-	x)
-	Setup virtualhost in etc/apache2/sites-enabled
-
-	x)
-	Create wsgi file
-	
-	x)
-	Mandatory global (eg in apache2.conf) WSGI Setting for JWT to work:
-		WSGIPAssAuthorization On
-
----
-
-Using the docker version.
-
+## Setup using Docker
 Create a directory where the MongoDB container will store its data,
 e.g. /data/prov and then configure the volume for the mongo-db container
 in the docker-compose.yml file. Change the lines:
 
+```
         volumes:
           - /tmp/:/data/db
+```
 
 To
+```
         volumes:
           - /data/prov:/data/db
+```
 
 After adding the OAuth keys and secrets into example_config.py you can
 start the docker containers by giving the command
 
+```
 docker-compose up --build
+```
 
 After that command has spinned up both the MongoDB and prov-template
 containers the application is available at https://localhost. You will
