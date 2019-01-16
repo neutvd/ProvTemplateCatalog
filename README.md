@@ -105,7 +105,7 @@ with 'CN=<yourhostname>' and replace 'ServerName prov-template' to
 
 ## Expanding templates
 
-### Example template (in provn): #TODO: Put our own template here
+### Example template(*) (in provn): #TODO: Put our own template here
 ```
 document
   prefix xml <http://www.w3.org/XML/1998/namespace>
@@ -209,4 +209,7 @@ r = requests.post('https://' + host_name + '/templates/' + template_id +
         data=trig_string, verify=False)
         
 print r.text        
-```           
+```
+
+(*) Example taken from Luc Moreau's ProvToolbox tutorial at
+https://lucmoreau.wordpress.com/2015/07/30/provtoolbox-tutorial-4-templates-for-provenance-part-1/
