@@ -4,7 +4,7 @@ services:
         image: mongo:3.4.9
         container_name: "mongo-db"
         volumes:
-          - /tmp/:/data/db
+          - ${PROV_TMPL_DATABASE}:/data/db
         ports:
           - 27017:27017
       # mongod --logpath /prov/mongo.log --dbpath /prov/data/
@@ -13,7 +13,7 @@ services:
     prov-template:
         build: .
         container_name: "prov-template"
-        image: prov-template-svc:latest
+        image: prov-template-svc_${PROV_TMPL_BASEURL_HOST}:latest
         ports:
           - 80:80
           - 443:443
@@ -21,4 +21,11 @@ services:
           - mongo-db
         depends_on:
           - mongo-db
-        #command: ./docker_entry.sh #tail -f /prov/access.log
+        environment:
+          - PROV_TMPL_github_KEY
+          - PROV_TMPL_github_SECRET
+          - PROV_TMPL_linkedin_KEY
+          - PROV_TMPL_linkedin_SECRET
+          - PROV_TMPL_google_KEY
+          - PROV_TMPL_google_SECRET
+          - PROV_TMPL_JWT_SECRET

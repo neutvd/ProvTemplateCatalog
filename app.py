@@ -15,7 +15,7 @@ from bson.objectid import ObjectId
 from logging.handlers import RotatingFileHandler
 import logging
 import json
-import sys
+import os, sys
 
 import prov
 import prov.dot
@@ -56,7 +56,7 @@ def render(result=None, popup_js=''):
 		result=result,
 		popup_js=popup_js,
 		title='MongoDB with Flask, vue.js using flask-jwt-simple and Authomatic',
-		base_url='https://localhost/',
+		base_url='https://%s/' % os.environ["PROV_TMPL_SERVERNAME"],
 		oauth1='',
 		oauth2=''
 	)
@@ -80,8 +80,8 @@ def getJwtUser():
 	return json.loads(get_jwt()['sub'])
 
 application = CustomFlask(__name__)
-application.config['JWT_SECRET_KEY'] = 'EuDaT2020'  # Change this!
-authomatic = Authomatic(CONFIG, 'EuDat2020', report_errors=False) # same here!
+application.config['JWT_SECRET_KEY'] = os.environ['PROV_TMPL_JWT_SECRET']
+authomatic = Authomatic(CONFIG, os.environ['PROV_TMPL_JWT_SECRET'], report_errors=False)
 
 jwt = JWTManager(application)
 
@@ -787,6 +787,4 @@ def login(provider_name):
 
 
 if __name__ == "__main__":
-
-
 	application.run(ssl_context='adhoc', host='0.0.0.0', debug=True, port=80)

@@ -47,16 +47,16 @@ npm install --save vue
 Setup on Ubuntu without using docker container.:
 
 1. Install necessary packages
-1. Set up MongoDB db with name TemplateData
-   	create collection "Templates"
-1. 	Change server url from localhost to your hostname in
-   		app.py 
-   		templates/src/main.js
-1. Change ServerName value to your hostname in
-   		example_conf_apache2_sites-enabled.conf
-1. Provide social media oauth2 app key and secret for each used site in config.py.
-       For github, the instructions can be found at https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/.
-1. 	Set secret keys in app.py
+1. Set up MongoDB db with name `TemplateData` and create collection `Templates`.
+1. 	Change server url to your hostname in
+    1. *app.py*: change os.environ["PROV_TMPL_SERVERNAME"] to your hostname.
+   	1. *templates/src/main.js*: replace localhost with your hostname.
+1. Change `ServerName` value to your hostname in `example_conf_apache2_sites-enabled.conf`
+1. Provide social media oauth2 app key and secret for each used site in `config.py`:
+*Uncomment the lines setting the keys and secrets directly and comment out
+the lines obtaining the keys and secrets from the environment.* For github, the instructions to obtain the key and secret can be found at https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/.
+1. Change `os.environ['PROV_TMPL_JWT_SECRET']` secret keys in app.py with your own
+made up secret.
 1. Use webpack to compile build.js from templates/src/main.js
    put or symlink build.js in static/js/build.js
    ```
@@ -65,30 +65,37 @@ Setup on Ubuntu without using docker container.:
    ```
 1. Setup virtualhost in etc/apache2/sites-enabled
 1. Create wsgi file
-1. Mandatory global (eg in apache2.conf) WSGI Setting for JWT to work:
-   		WSGIPAssAuthorization On
+1. Mandatory global (eg in apache2.conf) WSGI Setting for JWT to work: `WSGIPAssAuthorization On`
 
 ## Setup using Docker
+
+Create a file with the OAuth keys and secrets e.g. oauth-keys.txt:
+
+```Shell
+PROV_TMPL_github_KEY="github-consumer-key"
+PROV_TMPL_github_SECRET="github-consumer-secret"
+PROV_TMPL_linkedin_KEY="linkedin-consumer-key"
+PROV_TMPL_linkedin_SECRET="linkedin-consumer-secret"
+PROV_TMPL_google_KEY="google-consumer-key"
+PROV_TMPL_google_SECRET="google-consumer-key"
+```
+
+Make sure this file is not committed to the git repository, so keep
+it above the repository directory.
+
 Create a directory where the MongoDB container will store its data,
-e.g. /data/prov and then configure the volume for the mongo-db container
-in the docker-compose.yml file. Change the lines:
+e.g. /data/prov.
 
-```
-        volumes:
-          - /tmp/:/data/db
-```
+Run the `run-container.sh` script for a server that can be reached
+from anywhere under 'myserver.com':
 
-To
-```
-        volumes:
-          - /data/prov:/data/db
+```Shell
+./run-container.sh -d /data/prov -h myserver.com -b myserver.com -a ../oauth-keys.txt
 ```
 
-After adding the OAuth keys and secrets into example_config.py you can
-start the docker containers by giving the command
-
-```
-docker-compose up --build
+To run the server locally on a workstation you can do:
+```Shell
+./run-container.sh -d $HOME/tmp/data/prov -a ../oauth-keys.txt
 ```
 
 After that command has spinned up both the MongoDB and prov-template
@@ -96,12 +103,8 @@ containers the application is available at https://localhost. You will
 need to allow an exception when your browser gives you a warning about
 the self signed certificate.
 
-You should be able to leave all hostnames as-is. However, you can also
-change them to the hostname you're using in the same way as setting up
-the software described in the previous section. You will need to
-change the -subj argument to openssl and replace 'CN=prov-template'
-with 'CN=<yourhostname>' and replace 'ServerName prov-template' to
-'ServerName <your-hostname>'.
+To spin down the containers do `docker-compose down` in the directory
+where the `docker-compose.yml` file is.
 
 ## Expanding templates
 

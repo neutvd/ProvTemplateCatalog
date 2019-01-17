@@ -20,6 +20,11 @@ RUN pip install flask && \
 	pip install pydot && \
 	pip install requests
 
+ARG PROV_TMPL_SERVERNAME
+ARG PROV_TMPL_BASEURL_HOST
+ENV PROV_TMPL_SERVERNAME $PROV_TMPL_SERVERNAME
+ENV PROV_TMPL_BASEURL_HOST $PROV_TMPL_BASEURL_HOST
+
 WORKDIR /
 
 ## For no copy from local (already checked out) repository instead of
@@ -36,9 +41,12 @@ RUN mkdir -p /tmp/ProvTemplateCatalog/templates /var/www/repoConf /data/
 COPY ./templates/package.json /tmp/ProvTemplateCatalog/templates
 WORKDIR /tmp/ProvTemplateCatalog/templates
 RUN npm install && npm install --save vue
+
 ## Copy the application code and compile it.
 COPY . /tmp/ProvTemplateCatalog
+RUN sed -e "s/localhost/$PROV_TMPL_BASEURL_HOST/" -i src/main.js
 RUN npm run build
+
 ## Copy static content
 RUN cp --recursive --dereference /tmp/ProvTemplateCatalog/static /var/www/repoConf
 RUN mkdir /var/www/repoConf/templates
@@ -62,13 +70,14 @@ RUN mkdir -p -m 0711 /etc/ssl/private/ && \
     openssl rsa -passin pass:x -in /tmp/server.pass.key -out /etc/ssl/private/apache.key && \
     rm -f /tmp/server.pass.key && \
     openssl req -new -key /etc/ssl/private/apache.key -out /etc/ssl/certs/server.csr \
-            -subj "/C=NL/ST=Utrecht/L=Utrecht/O=KNMI/OU=RDWD/CN=prov-template/emailAddress=eu-team@knmi.nl" && \
+            -subj "/C=NL/ST=Utrecht/L=Utrecht/O=KNMI/OU=RDWD/CN=$PROV_TMPL_SERVERNAME/emailAddress=eu-team@knmi.nl" && \
     openssl x509 -req -sha256 -days 365 -in /etc/ssl/certs/server.csr \
             -signkey /etc/ssl/private/apache.key -out /etc/ssl/certs/apache.crt
 RUN touch /var/www/repoConf/out.log && chown apache.apache /var/www/repoConf/out.log && chmod 600 /var/www/repoConf/out.log
-RUN echo "ServerName prov-template" >> /etc/httpd/conf/httpd.conf
+RUN echo "ServerName $PROV_TMPL_SERVERNAME" >> /etc/httpd/conf/httpd.conf
 EXPOSE 80
 EXPOSE 443
 ENV FLASK_ENV=development
+
 CMD ["/usr/sbin/apachectl", "-DFOREGROUND"]
 # CMD ["python", "/var/www/repoConf/app.py"]
