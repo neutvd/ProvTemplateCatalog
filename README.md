@@ -55,10 +55,10 @@ Setup on Ubuntu without using docker container.:
 1. Provide social media oauth2 app key and secret for each used site in `config.py`:
 *Uncomment the lines setting the keys and secrets directly and comment out
 the lines obtaining the keys and secrets from the environment.* For github, the instructions to obtain the key and secret can be found at https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/.
-1. Change `os.environ['PROV_TMPL_JWT_SECRET']` secret keys in app.py with your own
+1. Change `os.environ['PROV_TMPL_JWT_SECRET']` secret keys in `app.py` with your own
 made up secret.
-1. Use webpack to compile build.js from templates/src/main.js
-   put or symlink build.js in static/js/build.js
+1. Use webpack to compile build.js from `templates/src/main.js`
+   put or symlink build.js in `static/js/build.js`
    ```
         cd templates
         npm run build
