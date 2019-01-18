@@ -54,6 +54,7 @@ COPY templates/index.html /var/www/repoConf/templates
 
 ## Setup the web server configuration.
 COPY example_conf_apache2_sites-enabled.conf /etc/httpd/conf.d/prov-template.conf
+RUN sed -e "s/prov-template/$PROV_TMPL_SERVERNAME/" -i /etc/httpd/conf.d/prov-template.conf
 COPY example_wsgi_conf.conf /var/www/repoConf/repoConf.wsgi
 COPY app.py /var/www/repoConf/
 COPY example_config.py /var/www/repoConf/config.py
