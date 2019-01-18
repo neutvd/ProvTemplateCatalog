@@ -17,7 +17,7 @@ CONFIG = {
         #'consumer_key': '<consumer_key>', 
         #'consumer_secret': '<consumer_secret>',
         'consumer_key': os.environ['PROV_TMPL_github_KEY'], 
-        'consumer_secret': os.environ['PROV_TMPL_github_KEY'],
+        'consumer_secret': os.environ['PROV_TMPL_github_SECRET'],
 	'scope': oauth2.GitHub.user_info_scope,  
     },
     
