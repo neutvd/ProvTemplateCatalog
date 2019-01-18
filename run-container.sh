@@ -47,7 +47,7 @@ if [ "{PROV_TMPL_SERVERNAME}" = "localhost" ] ; then
     PROV_TMPL_BASEURL_HOST="prov-template"
 fi
 if [ -f docker-compose.yml ] ; then
-    PROV_TMPL_JWT_SECRET=`mkpasswd`
+    PROV_TMPL_JWT_SECRET=`pwgen -1`
     export PROV_TMPL_DATABASE PROV_TMPL_SERVERNAME PROV_TMPL_BASEURL_HOST PROV_TMPL_JWT_SECRET
 
     export PROV_TMPL_github_KEY PROV_TMPL_github_SECRET
