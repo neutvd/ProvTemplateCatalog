@@ -1,0 +1,77 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prov-template-catalog
+spec:
+  selector:
+    matchLabels:
+      app: prov-template-catalog
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: prov-template-catalog
+    spec:
+      securityContext:
+        runAsUser: 0
+        fsGroup: 0
+      containers:
+        - name: prov-template
+          image: <repo-id>.dkr.ecr.eu-west-1.amazonaws.com/project-dare/prov-template-svc-eks:latest
+          command: ["/usr/sbin/apachectl"]
+          args: [
+            "-DFOREGROUND"
+          ]
+          ports:
+            - containerPort: 443
+          env:
+            - name: PROV_TMPL_BASEURL_HOST
+              value: secret
+            - name: PROV_TMPL_SERVERNAME
+              value: secret
+            - name: PROV_TMPL_github_KEY
+              value: secret
+            - name: PROV_TMPL_github_SECRET
+              value: secret
+            - name: PROV_TMPL_linkedin_KEY
+              value: secret
+            - name: PROV_TMPL_linkedin_SECRET
+              value: secret
+            - name: PROV_TMPL_google_KEY
+              value: secret
+            - name: PROV_TMPL_google_SECRET
+              value: secret
+            - name: PROV_TMPL_JWT_SECRET
+              value: secret
+  strategy:
+    type: Recreate
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: prov-template-catalog
+spec:
+  ports:
+    - protocol: TCP
+      port: 443
+      targetPort: 443
+      name: https
+  selector:
+    app: prov-template-catalog
+---
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: prov-template-catalog
+  #annotations:
+  #  kubernetes.io/ingress.class: "nginx"
+  #  nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            backend:
+              serviceName: prov-template-catalog
+              servicePort: 80

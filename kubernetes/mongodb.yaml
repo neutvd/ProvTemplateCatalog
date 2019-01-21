@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prov-template-catalog-mongodb
+spec:
+  selector:
+    matchLabels:
+      app: prov-template-catalog-mongodb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: prov-template-catalog-mongodb
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 100
+      containers:
+        - name: mongo-db
+          image: mongo:3.4.9
+          command: ["mongod"]
+          args: [
+            "--dbpath", "/data/db"
+          ]
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+          - name: prov-template-db-data
+            mountPath: /data/db
+      volumes:
+        - name: prov-template-db-data
+          persistentVolumeClaim:
+            claimName: prov-template-db-data
+  strategy:
+    type: Recreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prov-template-db-data
+  labels:
+    app: prov-template-db-data
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Mi
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: prov-template-catalog-mongodb
+spec:
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+  selector:
+    app: prov-template-catalog-mongodb
