@@ -50,6 +50,7 @@ Setup on Ubuntu without using docker container.:
 1. Set up MongoDB db with name `TemplateData` and create collection `Templates`.
 1. 	Change server url to your hostname in
     1. *app.py*: change os.environ["PROV_TMPL_SERVERNAME"] to your hostname.
+    1. *app.py*: Change the mongo-db:27017 host:port specification for connecting to mongodb to the hostname and port where your mongodb server is running.
    	1. *templates/src/main.js*: replace localhost with your hostname.
 1. Change `ServerName` value to your hostname in `example_conf_apache2_sites-enabled.conf`
 1. Provide social media oauth2 app key and secret for each used site in `config.py`:
