@@ -59,19 +59,4 @@ spec:
       name: https
   selector:
     app: prov-template-catalog
----
-kind: Ingress
-apiVersion: extensions/v1beta1
-metadata:
-  name: prov-template-catalog
-  #annotations:
-  #  kubernetes.io/ingress.class: "nginx"
-  #  nginx.ingress.kubernetes.io/ssl-redirect: "false"
-spec:
-  rules:
-    - http:
-        paths:
-          - path: /
-            backend:
-              serviceName: prov-template-catalog
-              servicePort: 80
+  type: LoadBalancer
