@@ -44,7 +44,6 @@ RUN npm install && npm install --save vue
 
 ## Copy the application code and compile it.
 COPY . /tmp/ProvTemplateCatalog
-RUN sed -e "s/localhost/$PROV_TMPL_BASEURL_HOST/" -i src/main.js
 RUN npm run build
 
 ## Copy static content
