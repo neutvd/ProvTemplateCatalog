@@ -49,7 +49,7 @@ fi
 
 secretsdir=${HOME}/secrets/${PROV_TMPL_SERVERNAME}
 if [ ! -f ${secretsdir}/apache.key ] ; then
-    mkdir -p -m 777 ${secretsdir}
+    mkdir -p -m 755 ${secretsdir}
     openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out  ${secretsdir}/server.pass.key
     openssl rsa -passin pass:x -in ${secretsdir}/server.pass.key -out ${secretsdir}/apache.key
     rm -f ${secretsdir}/server.pass.key
@@ -57,11 +57,12 @@ if [ ! -f ${secretsdir}/apache.key ] ; then
             -subj "/C=NL/ST=Utrecht/L=Utrecht/O=KNMI/OU=RDWD/CN=$PROV_TMPL_SERVERNAME/emailAddress=eu-team@knmi.nl"
     openssl x509 -req -sha256 -days 365 -in ${secretsdir}/server.csr \
             -signkey ${secretsdir}/apache.key -out ${secretsdir}/apache.crt
+    chmod 644 ${secretsdir}/*
 fi
 
 confdir=${HOME}/conf/${PROV_TMPL_SERVERNAME}
 if [ ! -f ${confdir}/prov-template.conf ] ; then
-    mkdir -p -m 666 ${confdir}
+    mkdir -p -m 755 ${confdir}
     sed -e "s/prov-template/$PROV_TMPL_SERVERNAME/" example_conf_apache2_sites-enabled.conf >  ${confdir}/prov-template.conf
 fi
 
