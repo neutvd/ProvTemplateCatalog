@@ -17,7 +17,7 @@ services:
         container_name: "prov-template"
         image: prov-template-svc:latest
         ports:
-          - 443:443
+          - 8443:443
         links:
           - mongo-db
         depends_on:
@@ -28,6 +28,7 @@ services:
           - ${HOME}/conf/${PROV_TMPL_SERVERNAME}/prov-template.conf:/etc/httpd/conf.d/prov-template.conf:ro
         environment:
           - PROV_TMPL_SERVERNAME
+          - PROV_TMPL_MONGODB_HOSTPORT=mongo-db:27017
           - PROV_TMPL_github_KEY
           - PROV_TMPL_github_SECRET
           - PROV_TMPL_linkedin_KEY

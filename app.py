@@ -95,7 +95,7 @@ log.setLevel(logging.INFO)
 log.addHandler(handler)
 #log.addHandler(handler)
 
-client = MongoClient('mongo-db:27017')
+client = MongoClient(os.environ['PROV_TMPL_MONGODB_HOSTPORT'])
 db = client.TemplateData
 
 
