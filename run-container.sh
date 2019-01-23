@@ -46,6 +46,25 @@ mkdir -p ${PROV_TMPL_DATABASE} || exit 1
 if [ "{PROV_TMPL_SERVERNAME}" = "localhost" ] ; then
     PROV_TMPL_BASEURL_HOST="prov-template"
 fi
+
+secretsdir=${HOME}/secrets/${PROV_TMPL_SERVERNAME}
+if [ ! -f ${secretsdir}/apache.key ] ; then
+    mkdir -p -m 777 ${secretsdir}
+    openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out  ${secretsdir}/server.pass.key
+    openssl rsa -passin pass:x -in ${secretsdir}/server.pass.key -out ${secretsdir}/apache.key
+    rm -f ${secretsdir}/server.pass.key
+    openssl req -new -key ${secretsdir}/apache.key -out ${secretsdir}/server.csr \
+            -subj "/C=NL/ST=Utrecht/L=Utrecht/O=KNMI/OU=RDWD/CN=$PROV_TMPL_SERVERNAME/emailAddress=eu-team@knmi.nl"
+    openssl x509 -req -sha256 -days 365 -in ${secretsdir}/server.csr \
+            -signkey ${secretsdir}/apache.key -out ${secretsdir}/apache.crt
+fi
+
+confdir=${HOME}/conf/${PROV_TMPL_SERVERNAME}
+if [ ! -f ${confdir}/prov-template.conf ] ; then
+    mkdir -p -m 666 ${confdir}
+    sed -e "s/prov-template/$PROV_TMPL_SERVERNAME/" example_conf_apache2_sites-enabled.conf >  ${confdir}/prov-template.conf
+fi
+
 if [ -f docker-compose.yml ] ; then
     PROV_TMPL_JWT_SECRET=`pwgen -1`
     export PROV_TMPL_DATABASE PROV_TMPL_SERVERNAME PROV_TMPL_BASEURL_HOST PROV_TMPL_JWT_SECRET
@@ -53,10 +72,7 @@ if [ -f docker-compose.yml ] ; then
     export PROV_TMPL_github_KEY PROV_TMPL_github_SECRET
     export PROV_TMPL_linkedin_KEY PROV_TMPL_linkedin_SECRET
     export PROV_TMPL_google_KEY PROV_TMPL_google_SECRET
-    docker-compose build \
-                   --build-arg PROV_TMPL_SERVERNAME=${PROV_TMPL_SERVERNAME} \
-                   --build-arg PROV_TMPL_BASEURL_HOST=${PROV_TMPL_BASEURL_HOST} \
-                   prov-template
+    docker-compose build prov-template
     docker-compose up -d
 else
     echo "No docker-compose.yml file found."

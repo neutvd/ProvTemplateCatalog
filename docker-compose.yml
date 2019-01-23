@@ -15,16 +15,18 @@ services:
     prov-template:
         build: .
         container_name: "prov-template"
-        image: prov-template-svc_${PROV_TMPL_BASEURL_HOST}:latest
+        image: prov-template-svc:latest
         ports:
-          - 80:80
           - 443:443
         links:
           - mongo-db
         depends_on:
           - mongo-db
+        volumes:
+          - ${HOME}/secrets/${PROV_TMPL_SERVERNAME}/apache.key:/etc/ssl/private/apache.key:ro
+          - ${HOME}/secrets/${PROV_TMPL_SERVERNAME}/apache.crt:/etc/ssl/certs/apache.crt:ro
+          - ${HOME}/conf/${PROV_TMPL_SERVERNAME}/prov-template.conf:/etc/httpd/conf.d/prov-template.conf:ro
         environment:
-          - PROV_TMPL_BASEURL_HOST
           - PROV_TMPL_SERVERNAME
           - PROV_TMPL_github_KEY
           - PROV_TMPL_github_SECRET

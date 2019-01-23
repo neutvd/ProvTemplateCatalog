@@ -56,7 +56,7 @@ def render(result=None, popup_js=''):
 		result=result,
 		popup_js=popup_js,
 		title='MongoDB with Flask, vue.js using flask-jwt-simple and Authomatic',
-		base_url='https://%s/' % os.environ["PROV_TMPL_SERVERNAME"],
+		base_url='/',
 		oauth1='',
 		oauth2=''
 	)
