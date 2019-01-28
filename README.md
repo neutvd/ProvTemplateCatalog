@@ -104,6 +104,28 @@ the self signed certificate.
 To spin down the containers do `docker-compose down` in the directory
 where the `docker-compose.yml` file is.
 
+The `run-container.sh` commands creates files in `$HOME/secrets` and
+in `$HOME/conf`.
+
+## Setup using Kubernetes
+
+Nothing special needs to be done once you have a running kubernetes
+cluster with an ingress controller installed. All you need to do is
+run the `run-container.sh` command with the `-k` option:
+
+```Shell
+./run-container.sh -h <k8s-ingress-hostname> -b <k8s-ingress-hostname> -k
+```
+
+And it should deploy into your cluster. You can remove the pod with the command
+
+```Shell
+kubectl delete -f kubernetes/prov-template.yaml
+kubectl delete configmap prov-template-conf
+kubectl delete configmap prov-template-oauth
+kubectl delete configmap server-url-jwt-conf
+```
+
 ## Expanding templates
 
 ### Example template(*) (in provn): #TODO: Put our own template here
