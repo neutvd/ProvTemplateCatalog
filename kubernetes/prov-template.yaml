@@ -1,4 +1,3 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,32 +17,51 @@ spec:
         fsGroup: 0
       containers:
         - name: prov-template
-          image: <repo-id>.dkr.ecr.eu-west-1.amazonaws.com/project-dare/prov-template-svc-eks:latest
-          command: ["/usr/sbin/apachectl"]
-          args: [
-            "-DFOREGROUND"
-          ]
+          image: 510819665756.dkr.ecr.eu-west-1.amazonaws.com/project-dare/prov-template-svc:latest
+          command: ["/tmp/ProvTemplateCatalog/docker-cmd.sh"]
           ports:
-            - containerPort: 443
+            - containerPort: 80
+          volumeMounts:
+            # - name: apache-key
+            #   mountPath: /etc/ssl/private/apache.key
+            #   subPath: apache.key
+            # - name: apache-crt
+            #   mountPath: /etc/ssl/certs/apache.crt
+            #   subPath: apache.crt
+            - name: prov-template-conf
+              mountPath: /etc/httpd/conf.d/prov-template.conf
+              subPath: prov-template.conf
+          envFrom:
+            - configMapRef:
+                name: prov-template-oauth
           env:
-            - name: PROV_TMPL_BASEURL_HOST
-              value: secret
+            - name: PROV_TMPL_MONGODB_HOSTPORT
+              value: prov-template-catalog-mongodb
             - name: PROV_TMPL_SERVERNAME
-              value: secret
-            - name: PROV_TMPL_github_KEY
-              value: secret
-            - name: PROV_TMPL_github_SECRET
-              value: secret
-            - name: PROV_TMPL_linkedin_KEY
-              value: secret
-            - name: PROV_TMPL_linkedin_SECRET
-              value: secret
-            - name: PROV_TMPL_google_KEY
-              value: secret
-            - name: PROV_TMPL_google_SECRET
-              value: secret
+              valueFrom:
+                configMapKeyRef:
+                  name: server-url-jwt-conf
+                  key: prov-tmpl.servername
+            - name: PROV_TMPL_BASEURL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: server-url-jwt-conf
+                  key: prov-tmpl.baseurl
             - name: PROV_TMPL_JWT_SECRET
-              value: secret
+              valueFrom:
+                configMapKeyRef:
+                  name: server-url-jwt-conf
+                  key: prov-tmpl.jwt
+      volumes:
+        # - name: apache-key
+        #   configMap:
+        #     name: apache-key
+        # - name: apache-crt
+        #   configMap:
+        #     name: apache-crt
+        - name: prov-template-conf
+          configMap:
+            name: prov-template-conf
   strategy:
     type: Recreate
 ---
@@ -54,9 +72,25 @@ metadata:
 spec:
   ports:
     - protocol: TCP
-      port: 443
-      targetPort: 443
-      name: https
+      port: 80
+      targetPort: 80
+      name: http
   selector:
     app: prov-template-catalog
-  type: LoadBalancer
+#  type: LoadBalancer
+---
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: prov-template-catalog
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            backend:
+              serviceName: prov-template-catalog
+              servicePort: 80
