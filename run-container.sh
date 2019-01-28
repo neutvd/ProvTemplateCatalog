@@ -86,8 +86,6 @@ if [[ "${k8s}" = "no" && -f docker-compose.yml ]] ; then
 elif [[ "${k8s}" = "yes" && -f kubernetes/prov-template.yaml ]] ; then
     cp ${confdir}/prov-template-k8s.conf ${confdir}/prov-template.conf
     kubectl create configmap prov-template-conf --from-file=${confdir}/prov-template.conf
-    #kubectl create configmap apache-key --from-file=${secretsdir}/apache.key
-    #kubectl create configmap apache-crt --from-file=${secretsdir}/apache.crt
     kubectl create configmap prov-template-oauth --from-env-file=${oauth_key_file}
     kubectl create configmap server-url-jwt-conf \
             --from-literal=prov-tmpl.servername=${PROV_TMPL_SERVERNAME} \
