@@ -114,10 +114,12 @@ cluster with an ingress controller installed. All you need to do is
 run the `run-container.sh` command with the `-k` option:
 
 ```Shell
-./run-container.sh -h <k8s-ingress-hostname> -b <k8s-ingress-hostname> -k
+./run-container.sh -h <k8s-ingress-hostname> -b <k8s-ingress-hostname> -a ../oauth-keys.txt -k
 ```
 
-And it should deploy into your cluster. You can remove the pod with the command
+And it should deploy into your cluster. The requirements for the oauth file
+are the same as for starting the docker containers with `docker-compose`.
+You can remove the pod with the command
 
 ```Shell
 kubectl delete -f kubernetes/prov-template.yaml
