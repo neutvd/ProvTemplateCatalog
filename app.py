@@ -15,7 +15,7 @@ from bson.objectid import ObjectId
 from logging.handlers import RotatingFileHandler
 import logging
 import json
-import sys
+import os, sys
 
 import prov
 import prov.dot
@@ -37,7 +37,7 @@ import datetime
 
 
 #bad test
-sys.path.insert(0, '/home/cloudadm/EnvriProvTemplates/provtemplates')
+sys.path.insert(0, '/data/EnvriProvTemplates/provtemplates')
 import provconv
 
 class CustomFlask(Flask):
@@ -56,7 +56,7 @@ def render(result=None, popup_js=''):
 		result=result,
 		popup_js=popup_js,
 		title='MongoDB with Flask, vue.js using flask-jwt-simple and Authomatic',
-		base_url='https://envriplus-provenance.test.fedcloud.eu/',
+		base_url='/',
 		oauth1='',
 		oauth2=''
 	)
@@ -80,8 +80,8 @@ def getJwtUser():
 	return json.loads(get_jwt()['sub'])
 
 application = CustomFlask(__name__)
-application.config['JWT_SECRET_KEY'] = 'EuDaT2020'  # Change this!
-authomatic = Authomatic(CONFIG, 'EuDat2020', report_errors=False) # same here!
+application.config['JWT_SECRET_KEY'] = os.environ['PROV_TMPL_JWT_SECRET']
+authomatic = Authomatic(CONFIG, os.environ['PROV_TMPL_JWT_SECRET'], report_errors=False)
 
 jwt = JWTManager(application)
 
@@ -95,7 +95,7 @@ log.setLevel(logging.INFO)
 log.addHandler(handler)
 #log.addHandler(handler)
 
-client = MongoClient('127.0.0.1:27017')
+client = MongoClient(os.environ['PROV_TMPL_MONGODB_HOSTPORT'])
 db = client.TemplateData
 
 
@@ -521,19 +521,19 @@ def getTemplatesIdExpand(id=""):
 			log.info(unicode(bindings))
 
 			try:
-				writeprovarg=request.args.get['writeprov']
+				writeprovarg=request.args.get('writeprov')
 				#writeprovarg=input_json['writeprov']
 			except:
 				pass
 
 			try:
-				bindvernew=request.args.get['bindver']			
+				bindvernew=request.args.get('bindver')
 				#bindvernew=input_json['bindver']			
 			except:
 				pass
 
 			try:
-				fmt=request.args.get['fmt']
+				fmt=request.args.get('fmt')
 				#fmt=input_json['fmt']
 			except:
 				pass
@@ -787,6 +787,4 @@ def login(provider_name):
 
 
 if __name__ == "__main__":
-
-
 	application.run(ssl_context='adhoc', host='0.0.0.0', debug=True, port=80)

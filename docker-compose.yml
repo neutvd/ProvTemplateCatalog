@@ -1,0 +1,38 @@
+version: '2'
+services:
+    mongo-db:
+        image: mongo:3.4.9
+        container_name: "mongo-db"
+        volumes:
+          - ${PROV_TMPL_DATABASE}:/data/db
+        ports:
+          - 27017:27017
+      # mongod --logpath /prov/mongo.log --dbpath /prov/data/
+        user: mongodb
+        command: mongod --dbpath /data/db # --quiet
+        environment:
+          - PROV_TMPL_DATABASE
+    prov-template:
+        build: .
+        container_name: "prov-template"
+        image: prov-template-svc:latest
+        ports:
+          - 443:443
+        links:
+          - mongo-db
+        depends_on:
+          - mongo-db
+        volumes:
+          - ${HOME}/secrets/${PROV_TMPL_SERVERNAME}/apache.key:/etc/ssl/private/apache.key:ro
+          - ${HOME}/secrets/${PROV_TMPL_SERVERNAME}/apache.crt:/etc/ssl/certs/apache.crt:ro
+          - ${HOME}/conf/${PROV_TMPL_SERVERNAME}/prov-template.conf:/etc/httpd/conf.d/prov-template.conf:ro
+        environment:
+          - PROV_TMPL_SERVERNAME
+          - PROV_TMPL_MONGODB_HOSTPORT=mongo-db:27017
+          - PROV_TMPL_github_KEY
+          - PROV_TMPL_github_SECRET
+          - PROV_TMPL_linkedin_KEY
+          - PROV_TMPL_linkedin_SECRET
+          - PROV_TMPL_google_KEY
+          - PROV_TMPL_google_SECRET
+          - PROV_TMPL_JWT_SECRET
