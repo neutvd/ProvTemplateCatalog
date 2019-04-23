@@ -327,6 +327,7 @@ Vue.component('icon', Icon)
 					<tr><td><a :href="urlprovrdftrig">prov-o (TriG)</a></td></tr> \
 					<tr><td><b>Created:</b> {{ created }}</td></tr> \
 					<tr><td><b>Modified:</b> {{ modified }}</td></tr> \
+					<tr><td><b>Template ID:</b> {{ tid }}</td></tr> \
 			    </table> \
 			</div> \
 			</td> \
