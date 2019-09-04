@@ -9,6 +9,9 @@ RUN yum update -y && yum install -y epel-release deltarpm && yum update -y
 RUN yum install -y git python-devel python2-pip npm httpd openssl mod_ssl mod_wsgi graphviz && \
     yum clean all && rm -rf /var/cache/yum
 
+# fix problem with prov lib
+RUN pip install 'networkx==2.2'
+
 RUN pip install flask && \
     pip install flask-jwt-simple && \
     pip install flask-API && \
