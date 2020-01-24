@@ -1,27 +1,27 @@
-FROM centos:7
+FROM centos:latest
 
 MAINTAINER KNMI R&D Observations and Data Technology Department
 
 USER root
 
-RUN yum update -y && yum install -y epel-release deltarpm && yum update -y
+RUN yum update -y
 
-RUN yum install -y git python-devel python2-pip npm httpd openssl mod_ssl mod_wsgi graphviz && \
+RUN yum install -y git python3-devel python3-pip npm httpd openssl mod_ssl python3-mod_wsgi graphviz && \
     yum clean all && rm -rf /var/cache/yum
 
 # fix problem with prov lib
-RUN pip install 'networkx==2.2'
+RUN pip3 install 'networkx==2.2'
 
-RUN pip install flask && \
-    pip install flask-jwt-simple && \
-    pip install flask-API && \
-	pip install authomatic && \
-	pip install pymongo && \
-	pip install python-openid && \
-	pip install pyOpenSSL && \
-	pip install prov && \
-	pip install pydot && \
-	pip install requests
+RUN pip3 install flask && \
+    pip3 install flask-jwt-simple && \
+    pip3 install flask-API && \
+	pip3 install authomatic && \
+	pip3 install pymongo && \
+	pip3 install python3-openid && \
+	pip3 install pyOpenSSL && \
+	pip3 install prov && \
+	pip3 install pydot && \
+	pip3 install requests
 
 WORKDIR /
 
@@ -57,10 +57,11 @@ COPY example_config.py /var/www/repoConf/config.py
 WORKDIR /data/
 RUN git clone https://github.com/EnvriPlus-PROV/EnvriProvTemplates.git
 WORKDIR /data/EnvriProvTemplates
-RUN python setup.py install
+RUN python3 setup.py install
 
 WORKDIR /
 
+RUN /usr/libexec/httpd-ssl-gencerts
 RUN touch /var/www/repoConf/out.log && chown apache.apache /var/www/repoConf/out.log && chmod 600 /var/www/repoConf/out.log
 EXPOSE 80
 EXPOSE 443
