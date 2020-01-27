@@ -90,7 +90,7 @@ curRes=None
 #handler = RotatingFileHandler('/var/www/templateConf/foo.log', maxBytes=10000, backupCount=1)
 handler = logging.StreamHandler(stream=sys.stdout)
 log=logging.getLogger(__name__)
-log.setLevel(logging.INFO)
+log.setLevel(logging.DEBUG)
 log.addHandler(handler)
 #log.addHandler(handler)
 

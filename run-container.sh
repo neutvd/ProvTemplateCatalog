@@ -72,6 +72,8 @@ if [[ ! -f ${confdir}/prov-template.conf || ! -f ${confdir}/prov-template-k8s.co
     mkdir -p -m 755 ${confdir}
     sed -e "s/prov-template/$PROV_TMPL_SERVERNAME/" example_conf_apache2_sites-enabled.conf >  ${confdir}/prov-template.conf
     sed -e "s/prov-template/$PROV_TMPL_SERVERNAME/" kubernetes/prov-template.conf >  ${confdir}/prov-template-k8s.conf
+    sed -ri -e 's!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g'  -e 's!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g' \
+		"${confdir}/prov-template.conf"
 fi
 
 PROV_TMPL_JWT_SECRET=`pwgen -1`

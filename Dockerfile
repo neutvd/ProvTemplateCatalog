@@ -66,6 +66,15 @@ RUN touch /var/www/repoConf/out.log && chown apache.apache /var/www/repoConf/out
 EXPOSE 80
 EXPOSE 443
 ENV FLASK_ENV=development
+RUN sed -ri \
+		-e 's!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g' \
+		-e 's!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g' \
+		"/etc/httpd/conf/httpd.conf" && \
+		sed -ri \
+		-e 's!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g' \
+		-e 's!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g' \
+		"/etc/httpd/conf.d/ssl.conf"
+
 
 CMD ["/tmp/ProvTemplateCatalog/docker-cmd.sh"]
 # CMD ["python", "/var/www/repoConf/app.py"]
