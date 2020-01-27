@@ -57,6 +57,8 @@ COPY example_config.py /var/www/repoConf/config.py
 WORKDIR /data/
 RUN git clone https://github.com/EnvriPlus-PROV/EnvriProvTemplates.git
 WORKDIR /data/EnvriProvTemplates
+## The latest version breaks, so check out the last working version
+RUN git checkout 04b6ccca5c9c4e7b121a0c4567e6b628352f3a6f
 RUN python3 setup.py install
 
 WORKDIR /
