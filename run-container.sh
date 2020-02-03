@@ -80,20 +80,20 @@ PROV_TMPL_JWT_SECRET=`pwgen -1`
 if [[ "${k8s}" = "no" && -f docker-compose.yml ]] ; then
     export PROV_TMPL_DATABASE PROV_TMPL_SERVERNAME PROV_TMPL_BASEURL_HOST PROV_TMPL_JWT_SECRET
 
-    export PROV_TMPL_github_KEY PROV_TMPL_github_SECRET
-    export PROV_TMPL_linkedin_KEY PROV_TMPL_linkedin_SECRET
-    export PROV_TMPL_google_KEY PROV_TMPL_google_SECRET
+    [ -z "${PROV_TMPL_github_KEY}" ] || export PROV_TMPL_github_KEY PROV_TMPL_github_SECRET
+    [ -z "${PROV_TMPL_linkedin_KEY}" ] || export PROV_TMPL_linkedin_KEY PROV_TMPL_linkedin_SECRET
+    [ -z "${PROV_TMPL_google_KEY}" ] || export PROV_TMPL_google_KEY PROV_TMPL_google_SECRET
     docker-compose build prov-template
     docker-compose up -d
 elif [[ "${k8s}" = "yes" && -f kubernetes/prov-template.yaml ]] ; then
     cp ${confdir}/prov-template-k8s.conf ${confdir}/prov-template.conf
-    kubectl create configmap prov-template-conf --from-file=${confdir}/prov-template.conf
-    kubectl create configmap prov-template-oauth --from-env-file=${oauth_key_file}
-    kubectl create configmap server-url-jwt-conf \
+    kubectl -n swirrl create configmap prov-template-conf --from-file=${confdir}/prov-template.conf
+    kubectl -n swirrl create configmap prov-template-oauth --from-env-file=${oauth_key_file}
+    kubectl -n swirrl create configmap server-url-jwt-conf \
             --from-literal=prov-tmpl.servername=${PROV_TMPL_SERVERNAME} \
             --from-literal=prov-tmpl.baseurl=${PROV_TMPL_BASEURL_HOST} \
             --from-literal=prov-tmpl.jwt=${PROV_TMPL_JWT_SECRET}
-    kubectl create -f kubernetes/prov-template.yaml
+    kubectl -n swirrl create -f kubernetes/prov-template.yaml
 else
     echo "No docker-compose.yml or kubernetes/prov-template.yaml file found."
     exit 1
