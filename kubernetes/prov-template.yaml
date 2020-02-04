@@ -17,7 +17,7 @@ spec:
         fsGroup: 0
       containers:
         - name: prov-template
-          image: 510819665756.dkr.ecr.eu-west-1.amazonaws.com/project-dare/prov-template-svc:latest
+          image: 498391678517.dkr.ecr.eu-west-1.amazonaws.com/envrifair/prov-template-svc:latest
           command: ["/tmp/ProvTemplateCatalog/docker-cmd.sh"]
           ports:
             - containerPort: 80

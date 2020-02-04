@@ -45,8 +45,8 @@ while getopts h:d:b:a:k option ; do
 done
 
 . ${oauth_key_file} || exit 1
- 
-if [ "$k82" = "no" ] ; then
+
+if [ "$k8s" = "no" ] ; then
     mkdir -p ${PROV_TMPL_DATABASE} || exit 1
 fi
 
@@ -87,6 +87,7 @@ if [[ "${k8s}" = "no" && -f docker-compose.yml ]] ; then
     docker-compose up -d
 elif [[ "${k8s}" = "yes" && -f kubernetes/prov-template.yaml ]] ; then
     cp ${confdir}/prov-template-k8s.conf ${confdir}/prov-template.conf
+    kubectl -n swirrl create -f kubernetes/mongodb.yaml
     kubectl -n swirrl create configmap prov-template-conf --from-file=${confdir}/prov-template.conf
     kubectl -n swirrl create configmap prov-template-oauth --from-env-file=${oauth_key_file}
     kubectl -n swirrl create configmap server-url-jwt-conf \

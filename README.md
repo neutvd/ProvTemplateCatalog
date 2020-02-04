@@ -1,4 +1,4 @@
-THIS IS WORK IN PROGRESS 
+THIS IS WORK IN PROGRESS
 
 Please direct enquiries to https://github.com/d0rg0ld
 
@@ -34,17 +34,17 @@ sudo pip install requests
 ```
 
 Javascript environment:
-```	
+```
 sudo npm install -g webpack
 sudo npm install axios
 ```
 In "template" directory:
-```	
+```
 npm install
 npm install --save vue
 ```
-		
------ 
+
+-----
 
 ## Setup on Ubuntu without Docker containers
 Setup on Ubuntu without using docker container.:
@@ -125,10 +125,10 @@ are the same as for starting the docker containers with `docker-compose`.
 You can remove the pod with the command
 
 ```Shell
-kubectl delete -f kubernetes/prov-template.yaml
-kubectl delete configmap prov-template-conf
-kubectl delete configmap prov-template-oauth
-kubectl delete configmap server-url-jwt-conf
+kubectl -n swirrl delete -f kubernetes/prov-template.yaml
+kubectl -n swirrl delete configmap prov-template-conf
+kubectl -n swirrl delete configmap prov-template-oauth
+kubectl -n swirrl delete configmap server-url-jwt-conf
 ```
 
 ## Expanding templates
@@ -143,7 +143,7 @@ document
   prefix var <http://openprovenance.org/var#>
   prefix tmpl <http://openprovenance.org/tmpl#>
   prefix vargen <http://openprovenance.org/vargen#>
-  
+
   bundle vargen:bundleId
     prefix xml <http://www.w3.org/XML/1998/namespace>
     prefix foaf <http://xmlns.com/foaf/0.1/>
@@ -152,7 +152,7 @@ document
     prefix var <http://openprovenance.org/var#>
     prefix tmpl <http://openprovenance.org/tmpl#>
     prefix vargen <http://openprovenance.org/vargen#>
-    
+
     wasAttributedTo(var:quote, var:author)
     entity(var:quote, [prov:value='var:value'])
     entity(var:author, [prov:type='prov:Person', foaf:name='var:name'])
@@ -167,7 +167,7 @@ endDocument
 @prefix tmpl: <http://openprovenance.org/tmpl#> .
 @prefix var: <http://openprovenance.org/var#> .
 @prefix ex: <http://example.com/#> .
- 
+
 var:author a prov:Entity;
            tmpl:value_0 <http://orcid.org/0000-0002-3494-120X>.
 var:name   a prov:Entity;
@@ -191,7 +191,7 @@ trig_string = """
 @prefix tmpl: <http://openprovenance.org/tmpl#> .
 @prefix var: <http://openprovenance.org/var#> .
 @prefix ex: <http://example.com/#> .
- 
+
 var:author a prov:Entity;
            tmpl:value_0 <http://orcid.org/0000-0002-3494-120X>.
 var:name   a prov:Entity;
@@ -202,9 +202,9 @@ var:value  a prov:Entity;
            tmpl:2dvalue_0_0 "A Little Provenance Goes a Long Way".
 """
 url_encoded_trig_string = urllib.urlencode({"bindings": trig_string})
-r = requests.get('https://' + host_name + '/templates/' + template_id + 
+r = requests.get('https://' + host_name + '/templates/' + template_id +
     '/expand?fmt=provjson&writeprov=false&bindver=v2&' + url_encoded_trig_string,
-    verify=False) 
+    verify=False)
 
 print r.text
 ```
@@ -221,7 +221,7 @@ trig_string = """
 @prefix tmpl: <http://openprovenance.org/tmpl#> .
 @prefix var: <http://openprovenance.org/var#> .
 @prefix ex: <http://example.com/#> .
- 
+
 var:author a prov:Entity;
            tmpl:value_0 <http://orcid.org/0000-0002-3494-120X>.
 var:name   a prov:Entity;
@@ -232,11 +232,11 @@ var:value  a prov:Entity;
            tmpl:2dvalue_0_0 "A Little Provenance Goes a Long Way".
 """
 
-r = requests.post('https://' + host_name + '/templates/' + template_id + 
+r = requests.post('https://' + host_name + '/templates/' + template_id +
     '/expand?fmt=provjson&writeprov=false&bindver=v2',
         data=trig_string, verify=False)
-        
-print r.text        
+
+print r.text
 ```
 
 (*) Example taken from Luc Moreau's ProvToolbox tutorial at
