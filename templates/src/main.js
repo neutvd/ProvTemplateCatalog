@@ -153,7 +153,7 @@ var modal = Vue.component('modal',{
 \
           <div v-if="this.first" class="modal-header">\
             <slot name="header">\
-		Template registration	
+		Template registration
             </slot>\
           </div>\
 \
@@ -199,7 +199,7 @@ var modal = Vue.component('modal',{
           		</table>
 			</td>\
 			<td>
-				<textarea  style="resize: none" cols="80" rows="20" v-model="message.prov">@{{text2}}</textarea> 
+				<textarea  style="resize: none" cols="80" rows="20" v-model="message.prov">@{{text2}}</textarea>
 			</td> \
 		</tr>\
 		<tr>
@@ -210,7 +210,7 @@ var modal = Vue.component('modal',{
 					<td><div style="padding-right: 20px"><button class="modal-default-button" @click="$emit('renderprov', message.prov, message.type)">renderProv</button></div></td>
 				</tr>
 			</table></td>
-		</tr>	
+		</tr>
 		<tr>
 			<td colspan=2>
               			<div id="svg"></div> \
@@ -245,7 +245,7 @@ var modal = Vue.component('modal',{
 Vue.component('icon', Icon)
 
         var myList=Vue.component('template-item', {
-          props: ['tid', 'panZoomInstance', 'title', 'subject', 'description', 'type', 'coverage', 'comment', 'creator', 'created', 'modified', 'prov', 'provsvg', 
+          props: ['tid', 'panZoomInstance', 'title', 'subject', 'description', 'type', 'coverage', 'comment', 'creator', 'created', 'modified', 'prov', 'provsvg',
 			'urlprovn','urlprovxml','urlprovjson','urlprovrdftrig','urlprovrdfxml','owner', 'jwt'],
 	  mounted: function() {
 		var svg = new DOMParser().parseFromString(this.provsvg, 'application/xml').documentElement;
@@ -264,14 +264,14 @@ Vue.component('icon', Icon)
 		console.log(this.title)
 		svg.id=this.tid;
 
-		
+
 
 		console.log(this.$refs.canvas);
-  		//var el = this.$refs.canvas; 
-  		var el = this.$refs.canvas.parentElement; 
-		el.style.border="thin solid #000000";	
-		el.style.boxSizing="border-box";	
-		el.style.borderBottom="thin solid #000000";	
+  		//var el = this.$refs.canvas;
+  		var el = this.$refs.canvas.parentElement;
+		el.style.border="thin solid #000000";
+		el.style.boxSizing="border-box";
+		el.style.borderBottom="thin solid #000000";
 
 		while (el.firstChild) {
 		     console.log("REMOVING");
@@ -281,10 +281,10 @@ Vue.component('icon', Icon)
 
 		el.style.maxheight="300px";
 		el.style.height="300px";
-		
+
 		var svgnodes=svgappended.querySelectorAll("*");
-		for (var idx=0; idx<svgnodes.length; idx++) 
-			svgnodes[idx].removeAttribute("xlink:href"); 
+		for (var idx=0; idx<svgnodes.length; idx++)
+			svgnodes[idx].removeAttribute("xlink:href");
 
 		//this.panZoomInstance = svgPanZoom(svgappended, {
 		svgPanZoom(svgappended, {
@@ -294,7 +294,7 @@ Vue.component('icon', Icon)
 			center: true,
 			minZoom: 0.1
 		});
-			
+
 		//svg.style.position="absolute";
 
 
@@ -302,7 +302,7 @@ Vue.component('icon', Icon)
 		//el.style.height="100%";
 		//el.style.width="50%";
 		//el.style.height="300px";
-	  }, 
+	  },
 					//<tr><td nowrap style="padding 50px 0"><b>Title:</b> {{ title }}</td></tr> \
 					//<tr><td style="padding 50px 0"><b>Description:</b> <label style="max-width: 512px; word-wrap: break-word; cursor: default">{{ description }}</label></td></tr> \
 					//<tr><td style="padding 50px 0"><b>Creator:</b> {{ creator }}</td></tr> \
@@ -310,7 +310,7 @@ Vue.component('icon', Icon)
 					//<tr><td style="padding 50px 0"><b>Subject:</b> {{ subject }}</td></tr> \
 					//<tr><td style="padding 50px 0"><b>Type:</b> {{ type }}</td></tr> \
 					//<tr><td style="padding 50px 0"><b>Comment:</b> {{ comment }}</td></tr> \
-          template: ` <tr> 
+          template: ` <tr>
 			<td style="border-bottom: 1px solid black; "> \
 			<div>
 			    <table id="metadata" ref="metadata" style="line-height: 1;  padding:0.5rem 0.5rem ! important;"> \
@@ -378,7 +378,7 @@ Vue.component('icon', Icon)
 						{},
 						{ headers: this.createJwtHeaderData() }
 						)
-			.then( response => { 
+			.then( response => {
 				this.templates = response.data;
 				console.log(response);
 			})
@@ -406,15 +406,15 @@ Vue.component('icon', Icon)
 						{},
 						{ headers: this.createJwtHeaderData() }
 						)
-			.then( response => { 
+			.then( response => {
 				this.templates = response.data;
-				console.log(response); 
+				console.log(response);
 			})
 			.catch(function(error) {console.log(error)});
 			*/
 		    },
 		    convertProv: function (data, format) {
-			this.axiosInstance.post("/renderProvFile", 
+			this.axiosInstance.post("/renderProvFile",
 						{'provfile':data, 'format':format},
 						{ headers: this.createJwtHeaderData()})
 			.then( response => {
@@ -422,13 +422,13 @@ Vue.component('icon', Icon)
 				this.curRep.provsvg = response["data"];
 				var svg = new DOMParser().parseFromString(this.curRep.provsvg, 'application/xml').documentElement;
   				var el = document.getElementById("svg");
-				
+
 				while (el.firstChild) {
 				     console.log("REMOVING");
 				    el.removeChild(el.firstChild);
 				}
   				el.appendChild( el.ownerDocument.importNode(svg, true));
-			
+
 				}
 			)
 			.catch(function(error) {console.log(error)});
@@ -467,7 +467,7 @@ Vue.component('icon', Icon)
 		    },
 		    triggerDeleteConfirmed: function (template) {
 			this.axiosInstance.post("/deleteTemplate",
-						{ 'id' : template['id'] }, 
+						{ 'id' : template['id'] },
 						{ headers: this.createJwtHeaderData() }
 			)
 			.then( response => {
@@ -475,9 +475,9 @@ Vue.component('icon', Icon)
 				{},
 				{ headers: this.createJwtHeaderData() }
 				)
-				.then( response => { 
+				.then( response => {
 					this.templates = response.data;
-					console.log(response); 
+					console.log(response);
 				})
 				.catch(function(error) {console.log(error)})
 			})
@@ -496,19 +496,19 @@ Vue.component('icon', Icon)
 					svgfound=true;
 				}
 			}
-			
 
-			if (	templatedata["title"]=="" || 
-				templatedata["subject"]=="" || 
-				templatedata["description"]=="" || 
-				templatedata["type"]=="" || 
+
+			if (	templatedata["title"]=="" ||
+				templatedata["subject"]=="" ||
+				templatedata["description"]=="" ||
+				templatedata["type"]=="" ||
 				templatedata["creator"]=="" ||
 				templatedata["prov"]=="" ) {
 				this.showMissingInfoModal = true;
 			} else if (svgfound==false){
 				this.showBadTemplateModal = true;
 			} else {
-			
+
 				var createdTime=new Date().toLocaleString();
 				templatedata["created"]=createdTime;
 				templatedata["modified"]=createdTime;
@@ -521,9 +521,9 @@ Vue.component('icon', Icon)
 					{},
 					{ headers: this.createJwtHeaderData() }
 					)
-					.then( response => { 
+					.then( response => {
 						this.templates = response.data;
-						console.log(response); 
+						console.log(response);
 					})
 					.catch(function(error) {console.log(error)})
 				})
@@ -544,9 +544,9 @@ Vue.component('icon', Icon)
 				{},
 				{ headers: this.createJwtHeaderData() }
 				)
-				.then( response => { 
+				.then( response => {
 					this.templates = response.data;
-					console.log(response); 
+					console.log(response);
 				})
 				.catch(function(error) {console.log(error)})
 			})
