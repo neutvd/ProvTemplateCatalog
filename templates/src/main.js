@@ -369,7 +369,8 @@ Vue.component('icon', Icon)
                   },
 		  mounted() {
 			this.axiosInstance=axios.create({
-				httpsAgent: new https.Agent({  
+				baseURL: location.href,
+				httpsAgent: new https.Agent({
 					rejectUnauthorized: false
 				})
 			});

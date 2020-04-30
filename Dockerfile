@@ -48,7 +48,7 @@ RUN npm run build
 ## Copy static content
 RUN cp --recursive --dereference /tmp/ProvTemplateCatalog/static /var/www/repoConf
 RUN mkdir /var/www/repoConf/templates
-COPY templates/index.html /var/www/repoConf/templates
+COPY templates/* /var/www/repoConf/templates/
 
 ## Setup the web server configuration.
 COPY example_wsgi_conf.conf /var/www/repoConf/repoConf.wsgi
