@@ -4,8 +4,9 @@ MAINTAINER KNMI R&D Observations and Data Technology Department
 
 USER root
 
-RUN yum update -y
-
+# RUN yum update -y
+# RUN rm -f /var/lib/rpm/__db*
+# RUN rpm --rebuilddb
 RUN yum install -y git python3-devel python3-pip npm httpd openssl mod_ssl python3-mod_wsgi graphviz && \
     yum clean all && rm -rf /var/cache/yum
 
@@ -35,7 +36,7 @@ RUN npm install -g webpack && npm install axios
 
 RUN mkdir -p /tmp/ProvTemplateCatalog/templates /var/www/repoConf /data/
 
-## install deps in separate step to use docker's caching 
+## install deps in separate step to use docker's caching
 COPY ./templates/package.json /tmp/ProvTemplateCatalog/templates
 WORKDIR /tmp/ProvTemplateCatalog/templates
 RUN npm install && npm install --save vue

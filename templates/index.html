@@ -5,15 +5,16 @@
     <meta name="author" content="2017, Doron Goldfarb, doron.goldfarb@umweltbundesamt.at">
     <title>PROV-Template Catalog</title>
   </meta>
+  <base href="template-catalog">
 
 <head>
 <!-- Add this to <head> -->
-<link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap@next/dist/css/bootstrap.min.css"/>
-<link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css"/>
-<link rel="stylesheet" type="text/css" href="/static/css/custom.css"> 
-<link rel="stylesheet" type="text/css" href="/static/css/app.css"> 
+<link type="text/css" rel="stylesheet" href="/unpkg.com/bootstrap@next/dist/css/bootstrap.min.css"/>
+<link type="text/css" rel="stylesheet" href="/unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css"/>
+<link rel="stylesheet" type="text/css" href="static/css/custom.css">
+<link rel="stylesheet" type="text/css" href="static/css/app.css">
       <script type="text/javascript" src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
-      <script type="text/javascript" src="/static/js/authomatic.js"></script>
+      <script type="text/javascript" src="static/js/authomatic.js"></script>
 </head>
 <body>
 	<script type="text/javascript">(( popup_js | safe ))</script>
@@ -21,23 +22,23 @@
         <div id="template-list-example">
 	<div class="headDiv" align="right" v-cloak>
 		<ul class="small-block-grid-6">
-			<li class="small"><a href="https://www.eudat.eu/"> <img src="/static/img/ENVRI-plus_XL.jpg"/></a></li>
+			<li class="small"><a href="https://www.eudat.eu/"> <img src="static/img/ENVRI-plus_XL.jpg"/></a></li>
 			<li class="headTitle">PROV-Template Catalog</li>
 			<li class="about" v-on:click='triggerAbout()'>About</li>
 
 			<li v-if='!jwt'>
 				<a class="authomatic provider-button google" href="login/google">
-					<span>Login with Google</span><img src="/static/img/icons/google.ico"/>
+					<span>Login with Google</span><img src="static/img/icons/google.ico"/>
 				</a>
 			</li>
 			<li v-if='!jwt'>
 				<a class="authomatic provider-button github" href="login/github">
-					<span>Login with GitHub</span><img src="/static/img/icons/github.ico"/>
+					<span>Login with GitHub</span><img src="static/img/icons/github.ico"/>
 				</a>
 			</li>
 			<li v-if='!jwt'>
 				<a class="authomatic provider-button linkedin" href="login/linkedin">
-					<span>Login with LinkedIn</span><img src="/static/img/icons/linkedin.ico"/>
+					<span>Login with LinkedIn</span><img src="static/img/icons/linkedin.ico"/>
 				</a>
 			</li>
 
@@ -132,17 +133,17 @@
 		>
   		</modal>
 
-  		<confirmmodal :message="curRep" v-if="showConfirmModal" 
+  		<confirmmodal :message="curRep" v-if="showConfirmModal"
 			@close="showConfirmModal = false"
 			@deletetemplate="triggerDeleteConfirmed"
 		>
   		</confirmmodal>
 
-  		<missinginfomodal :message="curRep" v-if="showMissingInfoModal" 
+  		<missinginfomodal :message="curRep" v-if="showMissingInfoModal"
 			@close="showMissingInfoModal = false">
   		</missinginfomodal>
 
-  		<badtemplatemodal :message="curRep" v-if="showBadTemplateModal" 
+  		<badtemplatemodal :message="curRep" v-if="showBadTemplateModal"
 			@close="showBadTemplateModal = false">
   		</badtemplatemodal>
 
@@ -152,7 +153,7 @@
   		</aboutmodal>
 
         </div>
-	
+
 	<style>
 		[v-cloak] {
 			display: none;
@@ -191,7 +192,3 @@
 
   </body>
 </html>
-
-
-
-

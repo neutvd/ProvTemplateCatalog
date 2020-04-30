@@ -17,7 +17,8 @@ spec:
         fsGroup: 0
       containers:
         - name: prov-template
-          image: 498391678517.dkr.ecr.eu-west-1.amazonaws.com/envrifair/prov-template-svc:latest
+          image: registry.gitlab.com/knmi-oss/swirrl/swirrl-api/prov-template-catalog:latest
+          # imagePullPolicy: Never
           command: ["/tmp/ProvTemplateCatalog/docker-cmd.sh"]
           ports:
             - containerPort: 80
@@ -73,11 +74,12 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
 spec:
   rules:
     - http:
         paths:
-          - path: /
+          - path: /template-catalog(.+)
             backend:
               serviceName: prov-template-catalog
               servicePort: 80
