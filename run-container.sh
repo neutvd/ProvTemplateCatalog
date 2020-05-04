@@ -25,13 +25,11 @@ PROV_TMPL_SERVERNAME="prov-template"
 PROV_TMPL_DATABASE="/tmp"
 PROV_TMPL_BASEURL_HOST="localhost"
 k8s="no"
-while getopts h:d:b:a:k option ; do
+while getopts h:d:a:k option ; do
     case ${option} in
         (h) PROV_TMPL_SERVERNAME=${OPTARG}
             ;;
         (d) PROV_TMPL_DATABASE=${OPTARG}
-            ;;
-        (b) PROV_TMPL_BASEURL_HOST=${OPTARG}
             ;;
         (a) oauth_key_file=${OPTARG}
             ;;
@@ -78,7 +76,7 @@ fi
 
 PROV_TMPL_JWT_SECRET=`pwgen -1`
 if [[ "${k8s}" = "no" && -f docker-compose.yml ]] ; then
-    export PROV_TMPL_DATABASE PROV_TMPL_SERVERNAME PROV_TMPL_BASEURL_HOST PROV_TMPL_JWT_SECRET
+    export PROV_TMPL_DATABASE PROV_TMPL_SERVERNAME PROV_TMPL_JWT_SECRET
 
     export PROV_TMPL_github_KEY PROV_TMPL_github_SECRET
     export PROV_TMPL_linkedin_KEY PROV_TMPL_linkedin_SECRET
@@ -92,7 +90,6 @@ elif [[ "${k8s}" = "yes" && -f kubernetes/prov-template.yaml ]] ; then
     kubectl -n swirrl create configmap prov-template-oauth --from-env-file=${oauth_key_file}
     kubectl -n swirrl create configmap server-url-jwt-conf \
             --from-literal=prov-tmpl.servername=${PROV_TMPL_SERVERNAME} \
-            --from-literal=prov-tmpl.baseurl=${PROV_TMPL_BASEURL_HOST} \
             --from-literal=prov-tmpl.jwt=${PROV_TMPL_JWT_SECRET}
     kubectl -n swirrl create -f kubernetes/prov-template.yaml
 else

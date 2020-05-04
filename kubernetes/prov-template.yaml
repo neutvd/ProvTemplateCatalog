@@ -37,11 +37,6 @@ spec:
                 configMapKeyRef:
                   name: server-url-jwt-conf
                   key: prov-tmpl.servername
-            - name: PROV_TMPL_BASEURL_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: server-url-jwt-conf
-                  key: prov-tmpl.baseurl
             - name: PROV_TMPL_JWT_SECRET
               valueFrom:
                 configMapKeyRef:
