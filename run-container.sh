@@ -80,9 +80,9 @@ PROV_TMPL_JWT_SECRET=`pwgen -1`
 if [[ "${k8s}" = "no" && -f docker-compose.yml ]] ; then
     export PROV_TMPL_DATABASE PROV_TMPL_SERVERNAME PROV_TMPL_BASEURL_HOST PROV_TMPL_JWT_SECRET
 
-    [ -z "${PROV_TMPL_github_KEY}" ] || export PROV_TMPL_github_KEY PROV_TMPL_github_SECRET
-    [ -z "${PROV_TMPL_linkedin_KEY}" ] || export PROV_TMPL_linkedin_KEY PROV_TMPL_linkedin_SECRET
-    [ -z "${PROV_TMPL_google_KEY}" ] || export PROV_TMPL_google_KEY PROV_TMPL_google_SECRET
+    export PROV_TMPL_github_KEY PROV_TMPL_github_SECRET
+    export PROV_TMPL_linkedin_KEY PROV_TMPL_linkedin_SECRET
+    export PROV_TMPL_google_KEY PROV_TMPL_google_SECRET
     docker-compose build prov-template
     docker-compose up -d
 elif [[ "${k8s}" = "yes" && -f kubernetes/prov-template.yaml ]] ; then
