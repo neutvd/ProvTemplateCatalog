@@ -56,11 +56,8 @@ COPY app.py /var/www/repoConf/
 COPY example_config.py /var/www/repoConf/config.py
 
 WORKDIR /data/
-RUN git clone https://github.com/neutvd/EnvriProvTemplates.git
+RUN git clone https://github.com/EnvriPlus-PROV/EnvriProvTemplates.git
 WORKDIR /data/EnvriProvTemplates
-## The latest version breaks, so check out the last working version
-## which also has our fix for the inconsistent association order.
-RUN git checkout fix-issue-4
 RUN python3 setup.py install
 
 WORKDIR /
